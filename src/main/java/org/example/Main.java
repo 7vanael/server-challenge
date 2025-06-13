@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 public class Main {
     public static int port = 80;
     public static String root = ".";
+    public static String name = "Challenge Server";
 
     private static String usage = "  -p     Specify the port.  Default is 80.\n" +
             "  -r     Specify the root directory.  Default is the current working directory.\n" +
@@ -15,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         if (parseArgs(args)) {
-//            start Server
+//            start Server- with factory for connections?
         }
 
     }
@@ -74,7 +75,7 @@ public class Main {
         }
         if(printFlag){
             String absolutePath = new File(root).getAbsolutePath();
-            System.out.println("Challenge Server");
+            System.out.println(name);
             System.out.println("Running on port: " + port);
             System.out.println("Serving files from: " + absolutePath);
         }
