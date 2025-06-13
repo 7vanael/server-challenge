@@ -57,8 +57,10 @@ public class HttpConnection extends Connection {
                     if(path.startsWith("/")) path = path.substring(1);
 
                     targetPath = rootPath.resolve(path).normalize();
+                    System.out.println("resolved target path: " + targetPath);
+                    System.out.println(Files.exists(targetPath));
                     if(!Files.exists(targetPath)){
-                        String errorResponse = "HTTP/1.1 404 Not Found\r\n\r\n";
+                        String errorResponse = "HTTP/1.1 404 Not-Found\r\n\r\n";
                         out.print(errorResponse);
                         out.flush();
                         return;
@@ -73,7 +75,7 @@ public class HttpConnection extends Connection {
                     }
                     break;
                 case "POST":
-                    String response = "HTTP/1.1 405 NOTALLOWED\r\n";
+                    String response = "HTTP/1.1 405 Not-Allowed\r\n";
                     out.println(response);
                     out.println();
                     out.flush();
