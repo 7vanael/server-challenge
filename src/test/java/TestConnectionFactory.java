@@ -4,9 +4,9 @@ public class TestConnectionFactory implements ConnectionFactory{
 public int nextId = 100;
 
     @Override
-    public HttpConnection createConnection(Socket clientSocket, String rootDirectory) {
+    public HttpConnection createConnection(Socket clientSocket, String rootDirectory, String serverName) {
         nextId++;
-        return new HttpConnection(clientSocket, rootDirectory, nextId);
+        return new HttpConnection(clientSocket, rootDirectory, serverName, nextId);
     }
 
     @Override

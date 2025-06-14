@@ -7,6 +7,7 @@ import java.io.IOException;
 public class HttpConnectionTest {
     private TestConnectionFactory factory;
     private String rootDirectory = "testroot";
+    private String serverName = "Challenge Test Server";
     private MockSocket mocket;
     private String target;
 
@@ -19,7 +20,7 @@ public class HttpConnectionTest {
         target = "index.html";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName);
 
         connection.run();
 
@@ -39,7 +40,7 @@ public class HttpConnectionTest {
         target = "/";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName);
 
         connection.run();
 
@@ -59,7 +60,7 @@ public class HttpConnectionTest {
         target = "";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName);
 
         connection.run();
 
@@ -79,7 +80,7 @@ public class HttpConnectionTest {
         target = "junk";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName);
 
         connection.run();
 

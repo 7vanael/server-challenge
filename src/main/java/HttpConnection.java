@@ -3,19 +3,42 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpConnection extends Connection {
 
     private boolean active = true;
     private Path rootPath;
     private Path targetPath;
+    private String serverName;
+    private static Map<Integer, String> statusCodes = new HashMap<>(Map.of(
+            200, "OK",
+            400, "Bad-Request",
+            403, "Forbidden",
+            404, "Not-Found",
+            501, "Not-Implemented"));
+    private static Map<String, String> contentTypes = new HashMap<>(Map.of(
+            ".html", "text/html",
+            ".htm", "text/html",
+            ".css", "text/css",
+            ".js", "application/javascript",
+            ".png", "image/png",
+            ".jpg", "image/jpeg",
+            ".jpeg", "image/jpeg",
+            ".gif", "image/gif",
+            ".txt", "text/plain",
+            ".json", "application/json"));
+    private static String protocolVersion = "HTTP/1.1";
 
 
-    public HttpConnection(Socket clientSocket, String root, int id) {
+    public HttpConnection(Socket clientSocket, String root, String serverName, int id) {
         this.clientSocket = clientSocket;
         this.root = root;
         this.id = id;
         this.rootPath = Paths.get(root);
+        this.serverName = serverName;
     }
 
     @Override
@@ -33,14 +56,14 @@ public class HttpConnection extends Connection {
             String request = in.readLine();
             System.out.println("request line: " + request);
 
-            if(request == null){
+            if (request == null) {
                 System.out.println("ERROR: That request was null!");
                 return;
             }
             String[] requestLine = request.split(" ");
 
             if (requestLine.length < 3) {
-//              Send error
+                sendStatus(out, 400);
                 return;
             }
             String method = requestLine[0];
@@ -50,24 +73,30 @@ public class HttpConnection extends Connection {
             switch (method) {
                 case "GET":
                     System.out.println("processing GET with path: " + path);
-//                    targetPath = Paths.get(path);
-                    if(path.isEmpty() || path.equals("/")){
+                    if (path.isEmpty() || path.equals("/")) {
                         path = "index.html";
                     }
-                    if(path.startsWith("/")) path = path.substring(1);
+                    if (path.startsWith("/")) path = path.substring(1);
 
                     targetPath = rootPath.resolve(path).normalize();
+
                     System.out.println("resolved target path: " + targetPath);
                     System.out.println(Files.exists(targetPath));
-                    if(!Files.exists(targetPath)){
-                        String errorResponse = "HTTP/1.1 404 Not-Found\r\n\r\n";
-                        out.print(errorResponse);
-                        out.flush();
+
+                    if (!Files.exists(targetPath)) {
+                        sendStatus(out, 404);
                         return;
-                    }else {
-                        String response = "HTTP/1.1 200 OK\r\n\r\n";
-                        System.out.println(response);
-                        out.println(response);
+                    } else if (!targetPath.startsWith(rootPath)) {
+                        sendStatus(out, 403);
+                        return;
+                    } else {
+                        sendStatus(out, 200);
+                        out.println("Date: " + new Date().toString());
+                        out.println("Server: " + serverName);
+                        out.println("Connection: close");
+                        out.println("Content-Type: " + getContentType(targetPath));
+                        byte[] fileBytes = Files.readAllBytes(targetPath);
+                        out.println("Content-Length: " + fileBytes.length);
                         out.flush();
 
                         bodyOut.write(Files.readAllBytes(targetPath));
@@ -75,11 +104,7 @@ public class HttpConnection extends Connection {
                     }
                     break;
                 case "POST":
-                    String response = "HTTP/1.1 405 Not-Allowed\r\n";
-                    out.println(response);
-                    out.println();
-                    out.flush();
-
+                    sendStatus(out, 501);
                     break;
             }
 
@@ -92,5 +117,24 @@ public class HttpConnection extends Connection {
                 System.out.println("Close connection error: " + e.getMessage());
             }
         }
+    }
+
+    private static void sendStatus(PrintWriter out, int statusNumber) {
+        String errorString = Integer.toString(statusNumber);
+        String errorDetail = statusCodes.get(statusNumber);
+        String errorResponse = protocolVersion + " " + errorString + " " + errorDetail + "\r\n\r\n";
+        out.print(errorResponse);
+        out.flush();
+    }
+    private static String getContentType(Path filePath) {
+        String fileName = filePath.getFileName().toString().toLowerCase();
+
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot == -1) {
+            return "application/octet-stream";
+        }
+
+        String extension = fileName.substring(lastDot);
+        return contentTypes.getOrDefault(extension, "application/octet-stream");
     }
 }
