@@ -31,6 +31,9 @@ public class Server {
 
     }
 
+//    Router needed; where does the request go?
+//
+
     //factory to make client sockets; pass factory in.
 //
 //    private void handleClient(Socket clientSocket) {

@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpConnection extends Connection {
+    String method ;
+    String path ;
+    String protocol;
 
     private boolean active = true;
     private Path rootPath;
@@ -52,36 +55,12 @@ public class HttpConnection extends Connection {
 //                they are files we don't want to convert.: use for Body
              BufferedOutputStream bodyOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
-            System.out.println("about to read request line...");
-            String request = in.readLine();
-            System.out.println("request line: " + request);
-
-            if (request == null) {
-                System.out.println("ERROR: That request was null!");
-                return;
-            }
-            String[] requestLine = request.split(" ");
-
-            if (requestLine.length < 3) {
-                sendStatus(out, 400);
-                return;
-            }
-            String method = requestLine[0];
-            String path = requestLine[1];
-            String protocol = requestLine[2]; //Probably don't need this?
+            parseRequest(in, out);
 
             switch (method) {
                 case "GET":
                     System.out.println("processing GET with path: " + path);
-                    if (path.isEmpty() || path.equals("/")) {
-                        path = "index.html";
-                    }
-                    if (path.startsWith("/")) path = path.substring(1);
-
                     targetPath = rootPath.resolve(path).normalize();
-
-                    System.out.println("resolved target path: " + targetPath);
-                    System.out.println(Files.exists(targetPath));
 
                     if (!Files.exists(targetPath)) {
                         sendStatus(out, 404);
@@ -117,6 +96,31 @@ public class HttpConnection extends Connection {
                 System.out.println("Close connection error: " + e.getMessage());
             }
         }
+    }
+
+    private boolean parseRequest(BufferedReader in, PrintWriter out) throws IOException {
+        System.out.println("about to read request line...");
+        String request = in.readLine();
+        System.out.println("request line: " + request);
+
+        if (request == null) {
+            System.out.println("ERROR: That request was null!");
+            return false;
+        }
+        String[] requestLine = request.split(" ");
+
+        if (requestLine.length < 3) {
+            sendStatus(out, 400);
+            return false;
+        }
+        method = requestLine[0];
+        path = requestLine[1];
+        protocol = requestLine[2]; //Probably don't need this?
+
+        if (path.isEmpty() || path.equals("/")) path = "index.html";
+        if (path.startsWith("/")) path = path.substring(1);
+
+        return true;
     }
 
     private static void sendStatus(PrintWriter out, int statusNumber) {
