@@ -33,6 +33,19 @@ public class RequestTest {
         Assertions.assertEquals("index.html", request.getPath());
         Assertions.assertEquals("HTTP/1.1", request.getProtocol());
         Assertions.assertEquals(0, request.getErrorCode());
+        Assertions.assertTrue(request.isValid());
+    }
+
+    @Test
+    public void getRequestWithLeadingSlashStillParses() throws IOException {
+        target = "/index.html";
+        processGetRequest();
+
+        Assertions.assertEquals("GET", request.getMethod());
+        Assertions.assertEquals("index.html", request.getPath());
+        Assertions.assertEquals("HTTP/1.1", request.getProtocol());
+        Assertions.assertEquals(0, request.getErrorCode());
+        Assertions.assertTrue(request.isValid());
     }
 
     @Test
@@ -44,6 +57,7 @@ public class RequestTest {
         Assertions.assertEquals("index.html", request.getPath());
         Assertions.assertEquals("HTTP/1.1", request.getProtocol());
         Assertions.assertEquals(0, request.getErrorCode());
+        Assertions.assertTrue(request.isValid());
     }
 
     @Test
@@ -51,6 +65,7 @@ public class RequestTest {
         target = "junk";
         processGetRequest();
         Assertions.assertEquals(404, request.getErrorCode());
+        Assertions.assertFalse(request.isValid());
     }
 
     @Test
@@ -58,6 +73,7 @@ public class RequestTest {
         target = "../..";
         processGetRequest();
         Assertions.assertEquals(403, request.getErrorCode());
+        Assertions.assertFalse(request.isValid());
     }
 
     @Test
@@ -66,15 +82,26 @@ public class RequestTest {
         String clientMessage = "Getter  Get" + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(clientMessage);
         in = new BufferedReader(new InputStreamReader(mocket.getInputStream()));
-        request = new Request(in, rootpath);
+        request = Request.parseRequest(in, rootpath);
         Assertions.assertEquals(400, request.getErrorCode());
+        Assertions.assertFalse(request.isValid());
     }
 
+    @Test
+    public void emptyRequestReturns400Error() throws IOException {
+        target = "";
+        String clientMessage = "";
+        mocket = new MockSocket(clientMessage);
+        in = new BufferedReader(new InputStreamReader(mocket.getInputStream()));
+        request = Request.parseRequest(in, rootpath);
+        Assertions.assertEquals(400, request.getErrorCode());
+        Assertions.assertFalse(request.isValid());
+    }
 
         private void processGetRequest() throws IOException {
         String clientMessage = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(clientMessage);
         in = new BufferedReader(new InputStreamReader(mocket.getInputStream()));
-        request = new Request(in, rootpath);
+        request = Request.parseRequest(in, rootpath);
     }
 }
