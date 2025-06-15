@@ -94,6 +94,19 @@ public class ResponseTest {
     }
 
     @Test
+    public void multipleHeadersCanBeAdded() {
+        response = new Response(serverName);
+        response.addHeader("Header1", "value1")
+                .addHeader("Header2", "value2")
+                .addHeader("Header3", "value3");
+
+        Map<String, String> headers = response.getHeaders();
+        Assertions.assertEquals(3, headers.size());
+        Assertions.assertEquals("value1", headers.get("Header1"));
+        Assertions.assertEquals("value2", headers.get("Header2"));
+        Assertions.assertEquals("value3", headers.get("Header3"));
+    }
+    @Test
     public void setHeadersReplacesAllHeaders() {
         response = new Response(serverName);
         response.addHeader("Old-Header", "old-value");
@@ -112,58 +125,44 @@ public class ResponseTest {
     }
 
     @Test
-    public void fluentInterfaceChaining() {
+    public void settersCanDoChaining() {
         String body = "Chained response";
         response = new Response(serverName)
                 .setStatusCode(201)
                 .setContentType("application/json")
                 .setBody(body)
-                .addHeader("Location", "/api/resource/123")
-                .addHeader("Cache-Control", "no-store");
+                .addHeader("Location", "/images/123")
+                .addHeader("Server", serverName);
 
         Assertions.assertEquals(201, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getContentType());
         Assertions.assertArrayEquals(body.getBytes(), response.getBody());
-        Assertions.assertEquals("/api/resource/123", response.getHeaders().get("Location"));
-        Assertions.assertEquals("no-store", response.getHeaders().get("Cache-Control"));
+        Assertions.assertEquals("/images/123", response.getHeaders().get("Location"));
+        Assertions.assertEquals(serverName, response.getHeaders().get("Server"));
     }
 
     @Test
-    public void getBodyReturnsDefensiveCopy() {
+    public void getBodyReturnsCopyNotOriginalModifiableObject() {
         byte[] originalBody = "Original content".getBytes();
+
         response = new Response(serverName, 200, "text/plain", originalBody);
 
         byte[] retrievedBody = response.getBody();
-        retrievedBody[0] = 'X'; // Modify the retrieved array
+        retrievedBody[0] = 'X';
 
-        // Original should be unchanged
         Assertions.assertArrayEquals(originalBody, response.getBody());
     }
 
     @Test
-    public void getHeadersReturnsDefensiveCopy() {
+    public void getHeadersReturnsCopyNotOriginalModifiableObject() {
         response = new Response(serverName);
         response.addHeader("Test-Header", "test-value");
 
         Map<String, String> retrievedHeaders = response.getHeaders();
         retrievedHeaders.put("Malicious-Header", "malicious-value");
 
-        // Original should be unchanged
         Assertions.assertEquals(1, response.getHeaders().size());
         Assertions.assertNull(response.getHeaders().get("Malicious-Header"));
     }
 
-    @Test
-    public void multipleHeadersCanBeAdded() {
-        response = new Response(serverName);
-        response.addHeader("Header1", "value1")
-                .addHeader("Header2", "value2")
-                .addHeader("Header3", "value3");
-
-        Map<String, String> headers = response.getHeaders();
-        Assertions.assertEquals(3, headers.size());
-        Assertions.assertEquals("value1", headers.get("Header1"));
-        Assertions.assertEquals("value2", headers.get("Header2"));
-        Assertions.assertEquals("value3", headers.get("Header3"));
-    }
 }

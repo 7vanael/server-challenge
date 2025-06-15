@@ -59,22 +59,24 @@ public class RequestTest {
         Assertions.assertEquals(0, request.getErrorCode());
         Assertions.assertTrue(request.isValid());
     }
+// Should move these tests into Router logic, the parser shouldn't be
+//    doing evaluations too, only if the parsing is valid, not the destinations
 
-    @Test
-    public void invalidGETReturns404Error() throws IOException {
-        target = "junk";
-        processGetRequest();
-        Assertions.assertEquals(404, request.getErrorCode());
-        Assertions.assertFalse(request.isValid());
-    }
-
-    @Test
-    public void invalidGETPathReturnsForbiden403Error() throws IOException {
-        target = "../..";
-        processGetRequest();
-        Assertions.assertEquals(403, request.getErrorCode());
-        Assertions.assertFalse(request.isValid());
-    }
+//    @Test
+//    public void invalidGETReturns404Error() throws IOException {
+//        target = "junk";
+//        processGetRequest();
+//        Assertions.assertEquals(404, request.getErrorCode());
+//        Assertions.assertFalse(request.isValid());
+//    }
+//
+//    @Test
+//    public void invalidGETPathReturnsForbiden403Error() throws IOException {
+//        target = "../..";
+//        processGetRequest();
+//        Assertions.assertEquals(403, request.getErrorCode());
+//        Assertions.assertFalse(request.isValid());
+//    }
 
     @Test
     public void invalidRequestFormatReturns400Error() throws IOException {

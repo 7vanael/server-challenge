@@ -54,10 +54,6 @@ public class Request {
         protocol = parts[2];
 
         path = processPath(originalPath);
-
-        if (!validatePath()) {
-            return;
-        }
         valid = true;
     }
 
@@ -70,31 +66,6 @@ public class Request {
             processedPath = processedPath.substring(1);
         }
         return processedPath;
-    }
-
-    private boolean validatePath() {
-        try {
-            targetPath = rootPath.resolve(path).normalize();
-            if (!targetPath.startsWith(rootPath)) {
-                errorCode = 403;
-                return false;
-            }
-            if (!Files.exists(targetPath)) {
-                errorCode = 404;
-                return false;
-            }
-//            if (Files.isDirectory(targetPath)) {
-//                Path indexPath = targetPath.resolve("index.html");
-//                if (Files.exists(indexPath)) {
-//                    targetPath = indexPath;
-//                    path = path + "/index.html";
-//                }
-//            }
-            return true;
-        } catch (Exception e) {
-            errorCode = 500;
-            return false;
-        }
     }
 
     public String getMethod() {
