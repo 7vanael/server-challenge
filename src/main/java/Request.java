@@ -1,21 +1,16 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 public class Request {
     private String method;
     private String path;
     private String protocol;
     private int errorCode = 0;
-    private Path targetPath;
-    private Path rootPath;
     private boolean valid = false;
 
     public static Request parseRequest(BufferedReader in, Path rootPath) throws IOException {
         Request request = new Request();
-        request.rootPath = rootPath;
         request.parseRequestInternal(in);
         return request;
     }
