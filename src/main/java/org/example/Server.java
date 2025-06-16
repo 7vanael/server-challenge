@@ -1,3 +1,8 @@
+package org.example;
+
+import Connection.HttpConnection;
+import Router.Router;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -5,16 +10,18 @@ import java.util.ArrayList;
 
 public class Server {
     private int port;
-    private String root;
+    private String root ;
     private String name = "Challenge Server";
-
+    private Router router;
     private ServerSocket serverSocket;
     private boolean running = false;
-    ArrayList connections = new ArrayList<>();
+    ArrayList<HttpConnection> connections = new ArrayList<>();
 
-    public Server(int port, String root) {
+    public Server(int port, String root, Router router) {
         this.port = port;
         this.root = root;
+        this.router = router;
+        //These are for me
         System.out.println("Server constructed");
         System.out.println("port: " + port);
         System.out.println("root: " + root);
@@ -22,16 +29,20 @@ public class Server {
 
     public void startServer() throws IOException {
         serverSocket = new ServerSocket(port);
-        System.out.println("Server socket initialized");
+        System.out.println("Server socket initialized"); //Just for me
         running = true;
         while (running) {
             Socket clientSocket = serverSocket.accept();
-//            new Thread(() -> handleClient(clientSocket)).start();
+            connections.add(new HttpConnection(clientSocket, root, router));
+            for(HttpConnection connection : connections){
+                System.out.println("Running connection: ");
+                connection.run();
+            }
         }
 
     }
 
-//    Router needed; where does the request go?
+//    Router.Router needed; where does the request go?
 //
 
     //factory to make client sockets; pass factory in.
@@ -40,9 +51,12 @@ public class Server {
 //        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 //             OutputStream out = clientSocket.getOutputStream()
 //        ) {
-
+//
+//            new Thread(() -> handleClient(clientSocket)).start();
+//            connectionPool.submit(new Connection.HttpConnection(clientSocket, root, name, router));
+//
 //    CONNECTION INTERFACE PERHAPS??? - done
-//    Connection connection = new Connection (serverSocket, clientSocket);
+//    Connection.Connection connection = new Connection.Connection (serverSocket, clientSocket);
 //    connections.add(connection);
 //    connection.run();
 //            String line;
@@ -54,6 +68,7 @@ public class Server {
 //        }
 
 //    }
+//connectionPool.shutdown();
 
     public void stopServer() throws IOException {
         running = false;

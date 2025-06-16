@@ -1,12 +1,17 @@
+package Connection;
+
+import Router.Router;
+import org.example.ConnectionFactory;
+
 import java.net.Socket;
 
-public class HttpConnectionFactory implements ConnectionFactory{
+public class HttpConnectionFactory implements ConnectionFactory {
 private int id = 0;
 
     @Override
     public Connection createConnection(Socket clientSocket, String rootDirectory, String serverName, Router router) {
         id++;
-        return new HttpConnection(clientSocket, rootDirectory, serverName, router
+        return new HttpConnection(clientSocket, rootDirectory, router
 //                , id
         );
     }

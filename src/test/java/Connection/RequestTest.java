@@ -1,3 +1,5 @@
+package Connection;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +61,7 @@ public class RequestTest {
         Assertions.assertEquals(0, request.getErrorCode());
         Assertions.assertTrue(request.isValid());
     }
-// Should move these tests into Router logic, the parser shouldn't be
+// Should move these tests into Router.Router logic, the parser shouldn't be
 //    doing evaluations too, only if the parsing is valid, not the destinations
 
 //    @Test

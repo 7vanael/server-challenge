@@ -1,3 +1,5 @@
+package Connection;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,13 +134,13 @@ public class ResponseTest {
                 .setContentType("application/json")
                 .setBody(body)
                 .addHeader("Location", "/images/123")
-                .addHeader("Server", serverName);
+                .addHeader("org.example.Server", serverName);
 
         Assertions.assertEquals(201, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getContentType());
         Assertions.assertArrayEquals(body.getBytes(), response.getBody());
         Assertions.assertEquals("/images/123", response.getHeaders().get("Location"));
-        Assertions.assertEquals(serverName, response.getHeaders().get("Server"));
+        Assertions.assertEquals(serverName, response.getHeaders().get("org.example.Server"));
     }
 
     @Test

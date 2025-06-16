@@ -1,4 +1,5 @@
-import java.net.ServerSocket;
+package Connection;
+
 import java.net.Socket;
 
 public abstract class Connection implements Runnable {

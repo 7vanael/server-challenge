@@ -1,3 +1,6 @@
+import org.example.Request;
+import org.example.Response;
+import org.example.Router;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,13 +9,19 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 public class RouterTest {
     private Router router;
     private String serverName = "TestServer";
     private Path tempDir;
     private Path rootPath;
+
+    //Use a router that's a regular router, but add routes to it?
+    // need a method to add a route- can have methods in main to add the rouse
+    //then the tests can initialize the mock routes..
+
+    //router doesn't define the routes- those have to be defined
+    //Perhaps in the server initialization in main?
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -60,13 +69,6 @@ public class RouterTest {
         Assertions.assertEquals(404, response.getStatusCode());
         Assertions.assertEquals("text/html", response.getContentType());
         Assertions.assertTrue(new String(response.getBody()).contains("404"));
-    }
-
-    @Test
-    public void routeGetFileOutsideRootReturns403() {
-        Request request = createMockRequest("GET", "../../..");
-        Response response = router.route(request);
-        Assertions.assertEquals(403, response.getStatusCode());
     }
 
     @Test

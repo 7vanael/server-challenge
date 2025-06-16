@@ -1,28 +1,31 @@
+package Connection;
+
+import Router.Router;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class HttpConnectionTest {
     private TestConnectionFactory factory;
     private String rootDirectory = "testroot";
-    private String serverName = "Challenge Test Server";
+    private String serverName = "Challenge Test org.example.Server";
     private MockSocket mocket;
-    private MockRouter mouter = new MockRouter(Paths.get(rootDirectory), serverName);
+    private Router router = new Router(serverName);
     private String target;
 
     @BeforeEach
     public void setUp() throws IOException {
         factory = new TestConnectionFactory();
     }
+
     @Test
     public void indexHtmlGETReturnsHello(){
         target = "index.html";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName, mouter);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
 
         connection.run();
 
@@ -42,7 +45,7 @@ public class HttpConnectionTest {
         target = "/";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName, mouter);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
 
         connection.run();
 
@@ -62,7 +65,7 @@ public class HttpConnectionTest {
         target = "";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName, mouter);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
 
         connection.run();
 
@@ -82,7 +85,7 @@ public class HttpConnectionTest {
         target = "junk";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, serverName, mouter);
+        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
 
         connection.run();
 

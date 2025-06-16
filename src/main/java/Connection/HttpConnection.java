@@ -1,42 +1,43 @@
+package Connection;
+
+import Router.Router;
+
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpConnection extends Connection {
     private boolean active = true;
     private Path rootPath;
-    private Path targetPath;
-    private String serverName;
     private Router router;
-    private static String protocolVersion = "HTTP/1.1";
 
-
-    public HttpConnection(Socket clientSocket, String root, String serverName, Router router) {
+    public HttpConnection(Socket clientSocket, String root, Router router) {
+        this.router = router;
         this.clientSocket = clientSocket;
         this.root = root;
         this.rootPath = Paths.get(root);
-        this.serverName = serverName;
-        this.router = new Router(this.rootPath, serverName);
+        this.router = router;
     }
 
     @Override
     public void run() {
         System.out.println("Connection initialized and Running");
+        System.out.println("routes available:");
+        System.out.println(router.getRoutes());
 //        inputStreamReader: bytes->characters. BufferedReader: characters-> lines.
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//             converts characters to bytes and includes a line flusher: use for Headers
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-//                SECOND OUTPUT METHOD because if we're sending files, they aren't characters
-//                they are files we don't want to convert.: use for Body
              BufferedOutputStream bodyOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
+
             Request request = Request.parseRequest(in, rootPath);
+            System.out.println("Request: ");
+            System.out.println(request.getPath() + request.getMethod());
             Response response = router.route(request);
+            System.out.println("Response: ");
+            System.out.println(response.getStatusCode());
             writeResponse(out, bodyOut, response);
 
         } catch (IOException e) {
@@ -52,9 +53,10 @@ public class HttpConnection extends Connection {
 
     private void writeResponse(PrintWriter out, BufferedOutputStream bodyOut, Response response) throws IOException {
         out.println("HTTP/1.1 " + response.getStatusCode() + " " + response.getStatusText());
-
+        System.out.println("Sending Headders:");
         for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
             out.println(header.getKey() + ": " + header.getValue());
+            System.out.println(header.getKey() + ": " + header.getValue());
         }
         out.println();
         out.flush();
@@ -64,5 +66,10 @@ public class HttpConnection extends Connection {
             bodyOut.flush();
         }
     }
+
+    public boolean getActive(){
+        return active;
+    }
+
 
 }
