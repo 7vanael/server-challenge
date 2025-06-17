@@ -59,6 +59,6 @@ public class Router {
         String statusText = HttpConstants.STATUS_CODES.get(statusCode);
         return "<html><head><title>" + statusCode + " " + statusText + "</title></head>" +
                 "<body><h1>" + statusCode + " " + statusText + "</h1>" +
-                "<p>org.example.Server: " + serverName + "</p></body></html>";
+                "Server: " + serverName + "</p></body></html>";
     }
 }

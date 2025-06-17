@@ -33,15 +33,18 @@ public class Route {
         }
 
         if (this.pathPattern.equals(path)) {
-            System.out.println("Path match - returning true");
+            System.out.println("Exact Path match - returning true");
 
             return true;
         }
 
-        if (this.pathPattern.equals("/*")) {
-            System.out.println("Wildcard match - returning true");
-
-            return true;
+        if (this.pathPattern.endsWith("/*")) {
+            String prefix = this.pathPattern.substring(0, this.pathPattern.length() - 2);
+            System.out.println("Wildcard check: prefix='" + prefix + "', path.startsWith(prefix)=" + path.startsWith(prefix));
+            if (path.startsWith(prefix)) {
+                System.out.println("Wildcard match - returning true");
+                return true;
+            }
         }
         System.out.println("No match - returning false");
 

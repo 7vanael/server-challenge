@@ -11,7 +11,7 @@ public class Request {
     private int errorCode = 0;
     private boolean valid = false;
 
-    public static Request parseRequest(BufferedReader in, Path rootPath) throws IOException {
+    public static Request parseRequest(BufferedReader in) throws IOException {
         Request request = new Request();
         request.parseRequestInternal(in);
         return request;
@@ -56,11 +56,8 @@ public class Request {
 
     private String processPath(String rawPath) {
         String processedPath = rawPath;
-        if (processedPath.isEmpty() || processedPath.equals("/")) {
-            processedPath = "index.html";
-        }
-        if (processedPath.startsWith("/")) {
-            processedPath = processedPath.substring(1);
+        if (processedPath.isEmpty() || processedPath.equals("/") || processedPath.contains("..")) {
+            processedPath = "/index.html";
         }
         return processedPath;
     }

@@ -32,7 +32,7 @@ public class HttpConnection extends Connection {
              BufferedOutputStream bodyOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
 
-            Request request = Request.parseRequest(in, rootPath);
+            Request request = Request.parseRequest(in);
             System.out.println("Request: ");
             System.out.println(request.getPath() + request.getMethod());
             Response response = router.route(request);

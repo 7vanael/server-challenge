@@ -18,7 +18,8 @@ public class HttpConstants {
             ".jpg", "image/jpeg",
             ".jpeg", "image/jpeg",
             ".gif", "image/gif",
-            ".txt", "text/plain"
+            ".txt", "text/plain",
+            ".pdf", "application/pdf"
     );
 
     public static final String PROTOCOL_VERSION = "HTTP/1.1";

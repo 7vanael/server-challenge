@@ -46,7 +46,7 @@ public class HttpConnectionTest {
         connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String response = mocket.getResponse(); // ← Your method
+        String response = mocket.getResponse();
         Assertions.assertTrue(response.contains("HTTP/1.1 404"));
         Assertions.assertTrue(response.contains("Not Found"));
     }
@@ -86,7 +86,7 @@ public class HttpConnectionTest {
         connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String response = mocket.getResponse(); // ← Your method
+        String response = mocket.getResponse();
         Assertions.assertTrue(response.contains("HTTP/1.1 404"));
         Assertions.assertTrue(response.contains("Not Found"));
     }

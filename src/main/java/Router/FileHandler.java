@@ -22,6 +22,8 @@ public class FileHandler implements RouteHandler {
 
     @Override
     public Response handle(Request request) throws IOException {
+        System.out.println("FileHandler received request: " + request.getPath());
+
         String requestPath = request.getPath();
 
         if (requestPath.startsWith("/")) {
@@ -31,13 +33,16 @@ public class FileHandler implements RouteHandler {
         Path targetPath = rootPath.resolve(requestPath).normalize();
 
         if (!Files.exists(targetPath) || Files.isDirectory(targetPath)) {
-            throw new IOException("File not found");
+            return NotFoundResponse.createResponse(serverName);
         }
 
         byte[] fileBytes = Files.readAllBytes(targetPath);
         String contentType = getContentType(targetPath);
 
-        return new Response(serverName, 200, contentType, fileBytes);
+        return new Response(serverName, 200, contentType, fileBytes)
+                .addHeader("Content-Type", contentType)
+                .addHeader("Content-Length", String.valueOf(fileBytes.length))
+                .addHeader("Server ", serverName);
     }
 
     private String getContentType(Path filePath) {
