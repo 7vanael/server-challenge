@@ -13,10 +13,11 @@ public class MockRouteHandler implements RouteHandler {
     public MockRouteHandler(String responseBody){
         this.responseBody = responseBody;
     }
+
     @Override
     public Response handle(Request request) throws IOException {
         handleCalled = true;
-        return new Response("TestServer", 200, "text/plain", responseBody);
+        return new Response("Test Server", 200, "text/plain", responseBody);
     }
 
     public boolean wasHandleCalled(){

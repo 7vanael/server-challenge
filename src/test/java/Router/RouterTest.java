@@ -85,59 +85,6 @@ public class RouterTest {
         Assertions.assertFalse(handler.wasHandleCalled());
     }
 
-//    @Test
-//    public void routeGetValidFileReturns200() throws IOException {
-//        Request request = createMockRequest("GET", "index.html");
-//
-//        Response response = router.route(request);
-//        String body = new String(response.getBody());
-//
-//        Assertions.assertEquals(200, response.getStatusCode());
-//        Assertions.assertEquals("text/html", response.getContentType());
-//        Assertions.assertTrue(body.contains("Hello, World!"));
-//    }
-//
-//    @Test
-//    public void routeGetNonexistentFileReturns404() {
-//        Request request = createMockRequest("GET", "nonexistent.html");
-//
-//        Response response = router.route(request);
-//
-//        Assertions.assertEquals(404, response.getStatusCode());
-//        Assertions.assertEquals("text/html", response.getContentType());
-//        Assertions.assertTrue(new String(response.getBody()).contains("404"));
-//    }
-//
-//    @Test
-//    public void routeGetImageFileReturnsCorrectContentType() {
-//        Request request = createMockRequest("GET", "images/test.png");
-//        Response response = router.route(request);
-//
-//        Assertions.assertEquals(200, response.getStatusCode());
-//        Assertions.assertEquals("image/png", response.getContentType());
-//    }
-//
-//    @Test
-//    public void routePostReturns501() {
-//        Request request = createMockRequest("POST", "index.html");
-//        Response response = router.route(request);
-//        Assertions.assertEquals(501, response.getStatusCode());
-//    }
-//
-//    @Test
-//    public void routeUnsupportedMethodReturns405() {
-//        Request request = createMockRequest("DELETE", "index.html");
-//        Response response = router.route(request);
-//        Assertions.assertEquals(405, response.getStatusCode());
-//    }
-//
-//    @Test
-//    public void routeRequestWithErrorCodeReturnsError() {
-//        Request request = createMockRequestWithError("GET", "index.html", 400);
-//        Response response = router.route(request);
-//        Assertions.assertEquals(400, response.getStatusCode());
-//    }
-
     private Request createMockRequest(String method, String path) {
         return new Request() {
             @Override
@@ -174,16 +121,5 @@ public class RouterTest {
                 return errorCode;
             }
         };
-    }
-
-    private void deleteDirectory(Path dir) throws IOException {
-        Files.walk(dir)
-                .sorted((a, b) -> b.compareTo(a)) // Delete files before directories
-                .forEach(path -> {
-                    try {
-                        Files.delete(path);
-                    } catch (IOException ignored) {
-                    }
-                });
     }
 }

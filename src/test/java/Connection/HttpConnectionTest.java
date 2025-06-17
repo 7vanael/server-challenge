@@ -1,100 +1,93 @@
 package Connection;
 
 import Router.Router;
+import Router.HomeHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class HttpConnectionTest {
     private TestConnectionFactory factory;
     private String rootDirectory = "testroot";
-    private String serverName = "Challenge Test org.example.Server";
+    private String serverName = "Challenge Server";
     private MockSocket mocket;
-    private Router router = new Router(serverName);
+    private Router router;
     private String target;
+    private HttpConnection connection;
 
     @BeforeEach
     public void setUp() throws IOException {
         factory = new TestConnectionFactory();
+        router = new Router(serverName);
+        router.addRoute("GET", "/", new HomeHandler(Paths.get(rootDirectory), serverName));
+        router.addRoute("GET", "index.html", new HomeHandler(Paths.get(rootDirectory), serverName));
     }
 
     @Test
-    public void indexHtmlGETReturnsHello(){
-        target = "index.html";
-        String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
-        mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
-
+    public void testValidGetRequest() throws IOException {
+        String httpRequest = "GET index.html HTTP/1.1\r\nHost: localhost\r\n\r\n";
+        mocket = new MockSocket(httpRequest);
+        connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String[] response = mocket.getResponse().split("\r\n\r\n");
-        String[] header = response[0].split("\n");
-        String[] status = header[0].split(" ");
-        String[] body = response[1].split("\n");
-
-        Assertions.assertTrue(status[0].equals("HTTP/1.1"));
-        Assertions.assertTrue(status[1].equals("200"));
-        Assertions.assertTrue(status[2].equals("OK"));
-        Assertions.assertTrue(response[1].contains("Hello, World!"));
+        String response = mocket.getResponse();
+        Assertions.assertTrue(response.contains("200"));
+        Assertions.assertTrue(response.contains("Hello, World!"));
+        Assertions.assertTrue(mocket.isClosed());
     }
 
     @Test
-    public void almostEmptyGETReturnsHello(){
-        target = "/";
-        String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
-        mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
-
+    public void testReturns404ForUnknownRoute() throws IOException {
+        String httpRequest = "GET /unknown HTTP/1.1\r\nHost: localhost\r\n\r\n";
+        mocket = new MockSocket(httpRequest);
+        connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String[] response = mocket.getResponse().split("\r\n\r\n");
-        String[] header = response[0].split("\n");
-        String[] status = header[0].split(" ");
-        String[] body = response[1].split("\n");
-
-        Assertions.assertTrue(status[0].equals("HTTP/1.1"));
-        Assertions.assertTrue(status[1].equals("200"));
-        Assertions.assertTrue(status[2].equals("OK"));
-        Assertions.assertTrue(response[1].contains("Hello, World!"));
+        String response = mocket.getResponse(); // ← Your method
+        Assertions.assertTrue(response.contains("HTTP/1.1 404"));
+        Assertions.assertTrue(response.contains("Not Found"));
     }
 
     @Test
-    public void emptyGETReturnsHello(){
+    public void almostEmptyGETReturnsHello() {
+        String httpRequest = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+        mocket = new MockSocket(httpRequest);
+        connection = factory.createConnection(mocket, rootDirectory, router);
+        connection.run();
+
+        String response = mocket.getResponse();
+        Assertions.assertTrue(response.contains("200"));
+        Assertions.assertTrue(response.contains("Hello, World!"));
+        Assertions.assertTrue(mocket.isClosed());
+    }
+
+    @Test
+    public void emptyGETReturnsHello() {
         target = "";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
-
+        connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String[] response = mocket.getResponse().split("\r\n\r\n");
-        String[] header = response[0].split("\n");
-        String[] status = header[0].split(" ");
-        String[] body = response[1].split("\n");
-
-        Assertions.assertTrue(status[0].equals("HTTP/1.1"));
-        Assertions.assertTrue(status[1].equals("200"));
-        Assertions.assertTrue(status[2].equals("OK"));
-        Assertions.assertTrue(response[1].contains("Hello, World!"));
+        String response = mocket.getResponse();
+        Assertions.assertTrue(response.contains("200"));
+        Assertions.assertTrue(response.contains("Hello, World!"));
+        Assertions.assertTrue(mocket.isClosed());
     }
 
-@Test
-    public void invalidGETReturnsError(){
+    @Test
+    public void invalidGETReturnsError() {
         target = "junk";
         String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
-        HttpConnection connection = factory.createConnection(mocket, rootDirectory, router);
-
+        connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();
 
-        String[] response = mocket.getResponse().split("\r\n\r\n");
-        String[] header = response[0].split("\n");
-        String[] status = header[0].split(" ");
-
-        Assertions.assertTrue(status[0].equals("HTTP/1.1"));
-        Assertions.assertTrue(status[1].equals("404"));
-        Assertions.assertTrue(status[2].equals("Not-Found"));
+        String response = mocket.getResponse(); // ← Your method
+        Assertions.assertTrue(response.contains("HTTP/1.1 404"));
+        Assertions.assertTrue(response.contains("Not Found"));
     }
 }

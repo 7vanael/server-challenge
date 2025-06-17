@@ -12,7 +12,6 @@ public int nextId = 100;
     public HttpConnection createConnection(Socket clientSocket, String rootDirectory, Router router) {
         nextId++;
         return new HttpConnection(clientSocket, rootDirectory, router
-//                , nextId
         );
     }
 
