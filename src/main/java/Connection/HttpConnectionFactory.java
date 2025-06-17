@@ -9,7 +9,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
 private int id = 0;
 
     @Override
-    public Connection createConnection(Socket clientSocket, String rootDirectory, String serverName, Router router) {
+    public Connection createConnection(Socket clientSocket, String rootDirectory, Router router) {
         id++;
         return new HttpConnection(clientSocket, rootDirectory, router
 //                , id

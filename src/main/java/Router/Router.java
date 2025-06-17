@@ -21,7 +21,7 @@ public class Router {
         routes.add(new Route(method, pathPattern, handler));
     }
 
-    public List<Route> getRoutes(){
+    public List<Route> getRoutes() {
         return routes;
     }
 
@@ -35,60 +35,21 @@ public class Router {
         System.out.println(routes);
         for (Route route : routes) {
             if (route.matches(request.getMethod(), request.getPath())) {
+                System.out.println("Route matched! About to call route.handle()");
                 try {
-                    return route.handle(request);
+                    Response response = route.handle(request);
+                    System.out.println("route.handle() returned: " + response.getStatusCode() + " - " + response.getBody());
+                    return response;
                 } catch (IOException e) {
                     return createErrorResponse(500);
                 }
             }
         }
-
         return createErrorResponse(404);
     }
-//    public Response route(Request request) {
-//        if (request.getErrorCode() != 0) {
-//            return createErrorResponse(request.getErrorCode());
-//        }
-//        switch (request.getMethod()) {
-//            case "GET":
-//                return handleGet(request);
-//            case "POST":
-//                return createErrorResponse(501);
-//            default:
-//                return createErrorResponse(405);
-//        }
-//    }
-//
-//    private Response handleGet(Request request) {
-//        try {
-//            System.out.println("Handling get:");
-//            //adds the rootpath to the back of the request path
-//            Path targetPath = rootPath.resolve(request.getPath()).normalize();
-//            System.out.println("request.getPath(): " + request.getPath());
-//            System.out.println("targetpath: ");
-//            System.out.println(targetPath);
-//            System.out.println();
-//
-//            if (!Files.exists(targetPath)) {
-//                return createErrorResponse(404);
-//            }
-////            if (Files.isDirectory(targetPath)) {
-////                return handleDirectoryListing(request);
-////            } else
-////                if (Files.isRegularFile(targetPath)) {
-////                return handleFileServing(targetPath);
-////            } else {
-////                return createErrorResponse(404);
-////            }
-//            return handleFileServing(targetPath);
-//        } catch (IOException e) {
-//            return createErrorResponse(500);
-//        }
-//    }
 
     private Response createErrorResponse(int statusCode) {
         String errorHtml = generateErrorPage(statusCode);
-
         return new Response(serverName, statusCode, "text/html", errorHtml)
                 .addHeader("Content-Type", "text/html")
                 .addHeader("Content-Length", String.valueOf(errorHtml.getBytes().length));
@@ -100,6 +61,4 @@ public class Router {
                 "<body><h1>" + statusCode + " " + statusText + "</h1>" +
                 "<p>org.example.Server: " + serverName + "</p></body></html>";
     }
-
-
 }

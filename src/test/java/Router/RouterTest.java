@@ -1,7 +1,8 @@
-import org.example.Request;
-import org.example.Response;
-import org.example.Router;
-import org.junit.jupiter.api.AfterEach;
+package Router;
+
+import Connection.Request;
+import Connection.Response;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,116 +11,168 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class RouterTest {
     private Router router;
     private String serverName = "TestServer";
-    private Path tempDir;
-    private Path rootPath;
-
-    //Use a router that's a regular router, but add routes to it?
-    // need a method to add a route- can have methods in main to add the rouse
-    //then the tests can initialize the mock routes..
-
-    //router doesn't define the routes- those have to be defined
-    //Perhaps in the server initialization in main?
 
     @BeforeEach
     public void setUp() throws IOException {
-        tempDir = Files.createTempDirectory("router-test");
-        rootPath = tempDir;
-        router = new Router(rootPath, serverName);
-
-        createTestFiles();
-    }
-
-    @AfterEach
-    public void tearDown() throws IOException {
-        deleteDirectory(tempDir);
-    }
-
-    private void createTestFiles() throws IOException {
-        Path indexFile = rootPath.resolve("index.html");
-        Files.write(indexFile, "<html><body>Hello, World!</body></html>".getBytes());
-
-        Path subDir = rootPath.resolve("images");
-        Files.createDirectory(subDir);
-
-        Path imageFile = subDir.resolve("test.png");
-        Files.write(imageFile, "fake-png-data".getBytes());
+        router = new Router(serverName);
     }
 
     @Test
-    public void routeGetValidFileReturns200() throws IOException {
-        Request request = createMockRequest("GET", "index.html");
+    public void testConstructor() {
+        assertNotNull(router.getRoutes());
+        assertTrue(router.getRoutes().isEmpty());
+    }
+
+    @Test
+    public void addRouteAddsToRoutes() {
+        MockRouteHandler handler = new MockRouteHandler("Test Response");
+        router.addRoute("GET", "/test", handler);
+        Assertions.assertEquals(1, router.getRoutes().size());
+        Assert.assertNotNull(router.getRoutes().get(0));
+    }
+
+    @Test
+    public void addRouteMultipleTimesAddsMultiplesToRoutes() {
+        MockRouteHandler handler = new MockRouteHandler("Test Response");
+        router.addRoute("GET", "/test", handler);
+        router.addRoute("GET", "/img", handler);
+        router.addRoute("POST", "/guess", handler);
+        Assertions.assertEquals(3, router.getRoutes().size());
+    }
+
+    @Test
+    public void anAddedRouteCanBeMatchedToARequest() {
+        MockRouteHandler handler = new MockRouteHandler("Test Response");
+        router.addRoute("GET", "/test", handler);
+        Request request = createMockRequest("GET", "/test");
 
         Response response = router.route(request);
-        String body = new String(response.getBody());
 
+        Assertions.assertEquals("Test Response", new String(response.getBody()));
         Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("text/html", response.getContentType());
-        Assertions.assertTrue(body.contains("Hello, World!"));
+        Assertions.assertTrue(handler.wasHandleCalled());
     }
 
     @Test
-    public void routeGetNonexistentFileReturns404() {
-        Request request = createMockRequest("GET", "nonexistent.html");
+    public void aRequestWithAnErrorGetsAnErrorResponseWithoutCallingHandler() {
+        MockRouteHandler handler = new MockRouteHandler("Test Response");
+        router.addRoute("GET", "/test", handler);
+        Request request = createMockRequestWithError("GET", "/test", 400);
 
         Response response = router.route(request);
 
-        Assertions.assertEquals(404, response.getStatusCode());
-        Assertions.assertEquals("text/html", response.getContentType());
-        Assertions.assertTrue(new String(response.getBody()).contains("404"));
-    }
-
-    @Test
-    public void routeGetImageFileReturnsCorrectContentType() {
-        Request request = createMockRequest("GET", "images/test.png");
-        Response response = router.route(request);
-
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("image/png", response.getContentType());
-    }
-
-    @Test
-    public void routePostReturns501() {
-        Request request = createMockRequest("POST", "index.html");
-        Response response = router.route(request);
-        Assertions.assertEquals(501, response.getStatusCode());
-    }
-
-    @Test
-    public void routeUnsupportedMethodReturns405() {
-        Request request = createMockRequest("DELETE", "index.html");
-        Response response = router.route(request);
-        Assertions.assertEquals(405, response.getStatusCode());
-    }
-
-    @Test
-    public void routeRequestWithErrorCodeReturnsError() {
-        Request request = createMockRequestWithError("GET", "index.html", 400);
-        Response response = router.route(request);
+        Assertions.assertTrue(new String(response.getBody()).contains("400"));
         Assertions.assertEquals(400, response.getStatusCode());
+        Assertions.assertFalse(handler.wasHandleCalled());
     }
+
+    @Test
+    public void aRequestWithoutMatchingHandlerGetsError404() {
+        MockRouteHandler handler = new MockRouteHandler("Test Response");
+        router.addRoute("GET", "/test", handler);
+        Request request = createMockRequest("GET", "/junk");
+
+        Response response = router.route(request);
+
+        Assertions.assertTrue(new String(response.getBody()).contains("404"));
+        Assertions.assertEquals(404, response.getStatusCode());
+        Assertions.assertFalse(handler.wasHandleCalled());
+    }
+
+//    @Test
+//    public void routeGetValidFileReturns200() throws IOException {
+//        Request request = createMockRequest("GET", "index.html");
+//
+//        Response response = router.route(request);
+//        String body = new String(response.getBody());
+//
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals("text/html", response.getContentType());
+//        Assertions.assertTrue(body.contains("Hello, World!"));
+//    }
+//
+//    @Test
+//    public void routeGetNonexistentFileReturns404() {
+//        Request request = createMockRequest("GET", "nonexistent.html");
+//
+//        Response response = router.route(request);
+//
+//        Assertions.assertEquals(404, response.getStatusCode());
+//        Assertions.assertEquals("text/html", response.getContentType());
+//        Assertions.assertTrue(new String(response.getBody()).contains("404"));
+//    }
+//
+//    @Test
+//    public void routeGetImageFileReturnsCorrectContentType() {
+//        Request request = createMockRequest("GET", "images/test.png");
+//        Response response = router.route(request);
+//
+//        Assertions.assertEquals(200, response.getStatusCode());
+//        Assertions.assertEquals("image/png", response.getContentType());
+//    }
+//
+//    @Test
+//    public void routePostReturns501() {
+//        Request request = createMockRequest("POST", "index.html");
+//        Response response = router.route(request);
+//        Assertions.assertEquals(501, response.getStatusCode());
+//    }
+//
+//    @Test
+//    public void routeUnsupportedMethodReturns405() {
+//        Request request = createMockRequest("DELETE", "index.html");
+//        Response response = router.route(request);
+//        Assertions.assertEquals(405, response.getStatusCode());
+//    }
+//
+//    @Test
+//    public void routeRequestWithErrorCodeReturnsError() {
+//        Request request = createMockRequestWithError("GET", "index.html", 400);
+//        Response response = router.route(request);
+//        Assertions.assertEquals(400, response.getStatusCode());
+//    }
 
     private Request createMockRequest(String method, String path) {
         return new Request() {
             @Override
-            public String getMethod() { return method; }
+            public String getMethod() {
+                return method;
+            }
+
             @Override
-            public String getPath() { return path; }
+            public String getPath() {
+                return path;
+            }
+
             @Override
-            public int getErrorCode() { return 0; }
+            public int getErrorCode() {
+                return 0;
+            }
         };
     }
 
     private Request createMockRequestWithError(String method, String path, int errorCode) {
         return new Request() {
             @Override
-            public String getMethod() { return method; }
+            public String getMethod() {
+                return method;
+            }
+
             @Override
-            public String getPath() { return path; }
+            public String getPath() {
+                return path;
+            }
+
             @Override
-            public int getErrorCode() { return errorCode; }
+            public int getErrorCode() {
+                return errorCode;
+            }
         };
     }
 

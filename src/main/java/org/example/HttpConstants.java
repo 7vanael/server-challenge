@@ -5,10 +5,10 @@ import java.util.Map;
 public class HttpConstants {
     public static final Map<Integer, String> STATUS_CODES = Map.of(
             200, "OK",
-            400, "Bad Connection.Request",
+            400, "Bad Request",
             404, "Not Found",
             405, "Method Not Allowed",
-            500, "Internal org.example.Server Error",
+            500, "Internal Server Error",
             501, "Not Implemented"
     );
 
