@@ -24,6 +24,7 @@ public class HttpConnectionTest {
         router = new Router(serverName);
         router.addRoute("GET", "/", new HomeHandler(Paths.get(rootDirectory), serverName));
         router.addRoute("GET", "index.html", new HomeHandler(Paths.get(rootDirectory), serverName));
+        router.addRoute("GET", "/index.html", new HomeHandler(Paths.get(rootDirectory), serverName));
     }
 
     @Test
@@ -66,8 +67,7 @@ public class HttpConnectionTest {
 
     @Test
     public void emptyGETReturnsHello() {
-        target = "";
-        String request = "GET " + target + " HTTP/1.1\r\nHost: localhost\r\n";
+        String request = "GET  HTTP/1.1\r\nHost: localhost\r\n";
         mocket = new MockSocket(request);
         connection = factory.createConnection(mocket, rootDirectory, router);
         connection.run();

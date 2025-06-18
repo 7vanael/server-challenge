@@ -41,16 +41,6 @@ public class Response {
         this.headers = new HashMap<>();
     }
 
-    public Response setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-        this.statusText = HttpConstants.STATUS_CODES.getOrDefault(statusCode, "");
-        return this;
-    }
-
-    public Response setContentType(String contentType) {
-        this.contentType = contentType;
-        return this;
-    }
 
     public Response setBody(String body) {
         this.body = body.getBytes();
@@ -64,11 +54,6 @@ public class Response {
 
     public Response addHeader(String name, String value) {
         this.headers.put(name, value);
-        return this;
-    }
-
-    public Response setHeaders(Map<String, String> headers) {
-        this.headers = new HashMap<>(headers);
         return this;
     }
 

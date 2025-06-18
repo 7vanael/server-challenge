@@ -42,34 +42,6 @@ public class Server {
 
     }
 
-//    Router.Router needed; where does the request go?
-//
-
-    //factory to make client sockets; pass factory in.
-//
-//    private void handleClient(Socket clientSocket) {
-//        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//             OutputStream out = clientSocket.getOutputStream()
-//        ) {
-//
-//            new Thread(() -> handleClient(clientSocket)).start();
-//            connectionPool.submit(new Connection.HttpConnection(clientSocket, root, name, router));
-//
-//    CONNECTION INTERFACE PERHAPS??? - done
-//    Connection.Connection connection = new Connection.Connection (serverSocket, clientSocket);
-//    connections.add(connection);
-//    connection.run();
-//            String line;
-//            String request = in.readLine();
-//            while(!request.isEmpty()){
-//                  parse the request..
-//            }
-
-//        }
-
-//    }
-//connectionPool.shutdown();
-
     public void stopServer() throws IOException {
         running = false;
         serverSocket.close();

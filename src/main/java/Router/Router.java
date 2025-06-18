@@ -38,7 +38,7 @@ public class Router {
                 System.out.println("Route matched! About to call route.handle()");
                 try {
                     Response response = route.handle(request);
-                    System.out.println("route.handle() returned: " + response.getStatusCode() + " - " + response.getBody());
+                    System.out.println("route.handle() returned: " + response.getStatusCode() + " - " + new String(response.getBody()));
                     return response;
                 } catch (IOException e) {
                     return createErrorResponse(500);

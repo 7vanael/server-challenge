@@ -2,6 +2,10 @@ package org.example;
 
 import Router.Router;
 import Router.HomeHandler;
+import Router.DirectoryHandler;
+import Router.FileHandler;
+import Router.HelloHandler;
+import Router.FormHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,20 +33,15 @@ public class Main {
 
             router.addRoute("GET", "/", new HomeHandler(rootPath, name));
             router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
-//          router.addRoute("GET", "/listing", new DirectoryHandler(rootPath, name));
-//          router.addRoute("GET", "/listing/img/*", new DirectoryHandler(rootPath, name));
-//          router.addRoute("GET", "/form", new FormDisplayHandler(rootPath, name));
-//          router.addRoute("POST", "/form", new FormSubmissionHandler(rootPath, name));
-//          HighLowGameHandler gameHandler = new HighLowGameHandler(serverName);
-//          router.addRoute("GET", "/game", gameHandler);
-//          router.addRoute("POST", "/game", gameHandler); // For game form submissions
-//          router.addRoute("GET", "/ping*", new PingHandler(rootPath), name);
-//
-//        // Catch-all for static files (only GET requests)
-//          router.addRoute("GET", "/*", new StaticFileHandler(rootPath, serverName));
+            router.addRoute("GET", "/index.html", new HomeHandler(rootPath, name));
+            router.addRoute("GET", "/hello", new HelloHandler(rootPath, name));
+            router.addRoute("GET", "/listing", new DirectoryHandler(rootPath, name));
+            router.addRoute("GET", "/listing/*", new DirectoryHandler(rootPath, name));
+            router.addRoute("GET", "/form", new FormHandler(rootPath, name));
+            router.addRoute("POST", "/form", new FormHandler(rootPath, name));
 
-            System.out.println("Main, added routes: ");
-            System.out.println(router.getRoutes());
+            router.addRoute("GET", "/*", new FileHandler(rootPath, name));
+
             Server server = new Server(port, root, router);
             server.startServer();
 
@@ -68,6 +67,8 @@ public class Main {
                             i++;
                             if (isValidPort(targetP)) {
                                 port = targetP;
+                            }else {
+                                return false;
                             }
                         } catch (NumberFormatException e) {
                             System.out.println("Invalid port");
@@ -142,12 +143,4 @@ public class Main {
             return false;
         }
     }
-//            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//                try {
-//                    server.stop();
-//                    System.out.println("\n" + name + " stopped");
-//                } catch (IOException e) {
-//                    System.err.println("Error stopping server: " + e.getMessage());
-//                }
-//            }));
 }

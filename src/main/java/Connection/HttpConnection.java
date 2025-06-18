@@ -4,72 +4,55 @@ import Router.Router;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HttpConnection extends Connection {
     private boolean active = true;
-    private Path rootPath;
     private Router router;
 
     public HttpConnection(Socket clientSocket, String root, Router router) {
         this.router = router;
         this.clientSocket = clientSocket;
         this.root = root;
-        this.rootPath = Paths.get(root);
-        this.router = router;
     }
 
     @Override
     public void run() {
         System.out.println("Connection initialized and Running");
-        System.out.println("routes available:");
-        System.out.println(router.getRoutes());
 //        inputStreamReader: bytes->characters. BufferedReader: characters-> lines.
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-             BufferedOutputStream bodyOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
+        try (BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
-
-            Request request = Request.parseRequest(in);
-            System.out.println("Request: ");
-            System.out.println(request.getPath() + request.getMethod());
+            Request request = Request.parseRequest(clientSocket.getInputStream());
             Response response = router.route(request);
-            System.out.println("Response: ");
-            System.out.println(response.getStatusCode());
-            writeResponse(out, bodyOut, response);
+            writeResponse(out, response);
 
         } catch (IOException e) {
-            System.out.println("Connection error: " + e.getMessage());
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
-                System.out.println("Close connection error: " + e.getMessage());
             }
         }
     }
 
-    private void writeResponse(PrintWriter out, BufferedOutputStream bodyOut, Response response) throws IOException {
-        out.println("HTTP/1.1 " + response.getStatusCode() + " " + response.getStatusText());
-        System.out.println("Sending Headders:");
+    private void writeResponse(BufferedOutputStream out, Response response) throws IOException {
+        StringBuilder headerBuilder = new StringBuilder();
+        headerBuilder.append("HTTP/1.1 ").append(response.getStatusCode())
+                .append(" ").append(response.getStatusText()).append("\r\n");
         for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
-            out.println(header.getKey() + ": " + header.getValue());
-            System.out.println(header.getKey() + ": " + header.getValue());
+            headerBuilder.append(header.getKey()).append(": ").append(header.getValue()).append("\r\n");
         }
-        out.println();
-        out.flush();
+        headerBuilder.append("\r\n");
+        out.write(headerBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
         if (response.getBody().length > 0) {
-            bodyOut.write(response.getBody());
-            bodyOut.flush();
+            out.write(response.getBody());
         }
+        out.flush();
     }
 
     public boolean getActive(){
         return active;
     }
-
-
 }
