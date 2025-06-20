@@ -32,8 +32,8 @@ public class Main {
             Router router = new Router(name);
             Path rootPath = Paths.get(root);
 
-//            router.addRoute("GET", "/", new HomeHandler(rootPath, name));
-//            router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
+            router.addRoute("GET", "/", new HomeHandler(rootPath, name));
+            router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
             router.addRoute("GET", "/index.html", new HomeHandler(rootPath, name));
             router.addRoute("GET", "/hello", new HelloHandler(rootPath, name));
             router.addRoute("GET", "/listing", new DirectoryHandler(rootPath, name));

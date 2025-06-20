@@ -257,14 +257,16 @@ public class Request {
     private String processPath(String rawPath) {
         String processedPath = rawPath;
         System.out.println("Request processing Path. Raw path: " + rawPath);
-        int segmentDemarcation = rawPath.substring(1).indexOf("/")  + 1; //Skip the leading /
-        System.out.println("Demarcation: " + segmentDemarcation);
+
         if (processedPath.isEmpty() || processedPath.equals("/") || processedPath.contains("..")) {
             processedPath = "/index.html";
-        }else if(segmentDemarcation > 1){
-            segment = rawPath.substring(segmentDemarcation + 1);
+        }
+        int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
+        System.out.println("Demarcation: " + segmentDemarcation);
+        if(segmentDemarcation > 1){
+            segment = processedPath.substring(segmentDemarcation + 1);
             System.out.println("Segment: " + segment);
-            processedPath = rawPath.substring(0, segmentDemarcation);
+            processedPath = processedPath.substring(0, segmentDemarcation);
             System.out.println("Path: " + processedPath);
         }
         return processedPath;
