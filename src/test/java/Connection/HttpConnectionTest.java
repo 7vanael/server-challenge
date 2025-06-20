@@ -19,7 +19,7 @@ public class HttpConnectionTest {
     private HttpConnection connection;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp(){
         factory = new TestConnectionFactory();
         router = new Router(serverName);
         router.addRoute("GET", "/", new HomeHandler(Paths.get(rootDirectory), serverName));

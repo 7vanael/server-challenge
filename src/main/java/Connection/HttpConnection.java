@@ -28,10 +28,12 @@ public class HttpConnection extends Connection {
             writeResponse(out, response);
 
         } catch (IOException e) {
+            System.out.println("Error in connection run: " + e.getMessage());
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
+                System.out.println("Error closing socket: " + e.getMessage());
             }
         }
     }

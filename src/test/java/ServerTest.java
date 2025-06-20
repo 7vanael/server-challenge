@@ -2,10 +2,7 @@ import org.example.ConnectionFactory;
 import org.example.Main;
 import Router.Router;
 import org.example.Server;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,9 +22,15 @@ public class ServerTest {
         outContent.reset();
         System.setOut(new PrintStream(outContent));
         Main.port = 80;
-        Main.root = ".";
+        Main.root = "testroot";
         //Is a mock router enough to be fake?
         router = new Router(Main.name);
+        Server server = new Server(Main.port, Main.root, router);
+    }
+
+    @AfterEach
+    public void after() throws IOException {
+        server.stopServer();
     }
 
     @AfterAll
@@ -37,7 +40,7 @@ public class ServerTest {
 
     @Test
     public void serverIsInitializedWithPortAndRoot() throws IOException {
-        Server server = new Server(Main.port, Main.root, router);
+
         server.startServer();
         String result = outContent.toString();
         server.stopServer();

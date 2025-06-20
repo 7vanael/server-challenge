@@ -6,6 +6,7 @@ import Router.DirectoryHandler;
 import Router.FileHandler;
 import Router.HelloHandler;
 import Router.FormHandler;
+import Router.PingHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,23 +32,34 @@ public class Main {
             Router router = new Router(name);
             Path rootPath = Paths.get(root);
 
-            router.addRoute("GET", "/", new HomeHandler(rootPath, name));
-            router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
+//            router.addRoute("GET", "/", new HomeHandler(rootPath, name));
+//            router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
             router.addRoute("GET", "/index.html", new HomeHandler(rootPath, name));
             router.addRoute("GET", "/hello", new HelloHandler(rootPath, name));
             router.addRoute("GET", "/listing", new DirectoryHandler(rootPath, name));
             router.addRoute("GET", "/listing/*", new DirectoryHandler(rootPath, name));
             router.addRoute("GET", "/form", new FormHandler(rootPath, name));
             router.addRoute("POST", "/form", new FormHandler(rootPath, name));
+            router.addRoute("GET", "/ping", new PingHandler(rootPath, name));
 
             router.addRoute("GET", "/*", new FileHandler(rootPath, name));
 
             Server server = new Server(port, root, router);
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                System.out.println("Shutting down server");
+                try{
+                    server.stopServer();
+                } catch (IOException e){
+                    System.out.println("error stopping server: " + e.getMessage());
+                }
+            }));
+
             server.startServer();
+            server.runServer();
 
         } catch (IOException e) {
             System.err.println("Failed to start server: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

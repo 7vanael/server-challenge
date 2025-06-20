@@ -111,6 +111,16 @@ public class RequestTest {
     }
 
     @Test
+    public void requestWithSegmentParses() throws IOException{
+        target = "/ping/2";
+        processGetRequest();
+
+        assertEquals("/ping", request.getPath());
+        assertEquals("GET", request.getMethod());
+        assertEquals("2", request.getSegment());
+    }
+
+    @Test
     public void multipartFormWithTwoFields() throws IOException {
         String boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
         String requestLine = "POST /test HTTP/1.1\r\n";

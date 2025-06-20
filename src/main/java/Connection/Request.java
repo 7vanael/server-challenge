@@ -19,6 +19,7 @@ public class Request {
     private HashMap<String, String> headers = new HashMap<>();
     private byte[] body = new byte[0];
     private List<MultipartPart> multipartParts = new ArrayList<>();
+    private String segment;
 
 
     public static Request parseRequest(InputStream inputStream) throws IOException {
@@ -255,8 +256,16 @@ public class Request {
 
     private String processPath(String rawPath) {
         String processedPath = rawPath;
+        System.out.println("Request processing Path. Raw path: " + rawPath);
+        int segmentDemarcation = rawPath.substring(1).indexOf("/")  + 1; //Skip the leading /
+        System.out.println("Demarcation: " + segmentDemarcation);
         if (processedPath.isEmpty() || processedPath.equals("/") || processedPath.contains("..")) {
             processedPath = "/index.html";
+        }else if(segmentDemarcation > 1){
+            segment = rawPath.substring(segmentDemarcation + 1);
+            System.out.println("Segment: " + segment);
+            processedPath = rawPath.substring(0, segmentDemarcation);
+            System.out.println("Path: " + processedPath);
         }
         return processedPath;
     }
@@ -270,6 +279,7 @@ public class Request {
     public HashMap<String, String> getHeaders() { return headers; }
     public byte[] getBody() { return body; }
     public List<MultipartPart> getMultipartParts() { return multipartParts; }
+    public String getSegment() {return segment;}
 
     public String getHeader(String name) {
         return headers.get(name.toLowerCase());
