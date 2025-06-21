@@ -260,14 +260,16 @@ public class Request {
         if (rawPath.isEmpty() || rawPath.equals("/") || rawPath.contains("..")) {
             processedPath = "/index.html";
         }
-//        int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
-//        System.out.println("Demarcation: " + segmentDemarcation);
-//        if(segmentDemarcation > 1){
-//            segment = processedPath.substring(segmentDemarcation + 1);
-//            System.out.println("Segment: " + segment);
-//            processedPath = processedPath.substring(0, segmentDemarcation);
-//            System.out.println("Path: " + processedPath);
-//        }
+        if (rawPath.startsWith("/ping/")) {
+            int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
+            System.out.println("Demarcation: " + segmentDemarcation);
+            if(segmentDemarcation > 1){
+                segment = processedPath.substring(segmentDemarcation + 1);
+                System.out.println("Segment: " + segment);
+                processedPath = processedPath.substring(0, segmentDemarcation);
+                System.out.println("Path: " + processedPath);
+            }
+        }
         return processedPath;
     }
 
