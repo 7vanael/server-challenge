@@ -51,6 +51,7 @@ public class PingHandlerTest {
         assertTrue(body.contains("<li>start time: " + startTime.format(formatter) + "</li>"));
         assertTrue(body.contains("<li>end time: " + endTime.format(formatter) + "</li>"));
     }
+
     @Test
     public void pingWithArgumentDelaysVariesWithSegment() throws IOException {
     Request request = createMockRequestWithSegment("GET", "/ping", "2");
@@ -65,6 +66,7 @@ public class PingHandlerTest {
         assertTrue(body.contains("<li>start time: " + startTime.format(formatter) + "</li>"));
         assertTrue(body.contains("<li>end time: " + endTime.format(formatter) + "</li>"));
     }
+
 
 
     private Request createMockRequest(String method, String path) {

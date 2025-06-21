@@ -6,6 +6,7 @@ import Router.Router;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Server {
     private int port;
@@ -14,6 +15,8 @@ public class Server {
     private Router router;
     private ServerSocket serverSocket;
     private boolean running = false;
+    ArrayList<HttpConnection> connections = new ArrayList<>();
+
 
     public Server(int port, String root, Router router) {
         this.port = port;
@@ -25,22 +28,39 @@ public class Server {
         System.out.println("root: " + root);
     }
 
-    public void startServer() throws IOException {
-        serverSocket = new ServerSocket(port);
+        public void startServer() {
+        System.out.println("in Server, about to try server socket");
+        try {
+            this.serverSocket = new ServerSocket(this.port);
+            System.out.println("server socket created");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("Server socket initialized");
+        new Thread(this::acceptConnections).start();
     }
 
-    public void runServer() throws IOException {
-        System.out.println("Server Running");
+    public void acceptConnections() {
+        System.out.println("Server Running: accepting connections in new thread");
         running = true;
         while (running) {
-            Socket clientSocket = serverSocket.accept();
-            Thread thread = new Thread(new HttpConnection(clientSocket, root, router));
-            thread.start();
+            try {
+                Socket clientSocket = this.serverSocket.accept();
+                System.out.println("accepted connection");
+                Thread thread = new Thread(new HttpConnection(clientSocket, this.root, this.router));
+                thread.start();
+            } catch (IOException e) {
+                if (running){
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
-    public void stopServer () throws IOException {
+    public boolean isAcceptingConnections() {
+        return running;
+    }
+    public void stopServer() throws IOException {
         running = false;
         serverSocket.close();
     }

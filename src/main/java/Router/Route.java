@@ -51,7 +51,7 @@ public class Route {
         return false;
     }
 
-    public Response handle(Request request) throws IOException, IOException {
+    public Response handle(Request request) throws IOException {
         return handler.handle(request);
     }
 }

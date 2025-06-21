@@ -59,7 +59,6 @@ public class Request {
 
         } catch (Exception e) {
             System.out.println("Exception during parsing: " + e.getMessage());
-            e.printStackTrace();
             errorCode = 400;
             valid = false;
         }
@@ -258,17 +257,17 @@ public class Request {
         String processedPath = rawPath;
         System.out.println("Request processing Path. Raw path: " + rawPath);
 
-        if (processedPath.isEmpty() || processedPath.equals("/") || processedPath.contains("..")) {
+        if (rawPath.isEmpty() || rawPath.equals("/") || rawPath.contains("..")) {
             processedPath = "/index.html";
         }
-        int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
-        System.out.println("Demarcation: " + segmentDemarcation);
-        if(segmentDemarcation > 1){
-            segment = processedPath.substring(segmentDemarcation + 1);
-            System.out.println("Segment: " + segment);
-            processedPath = processedPath.substring(0, segmentDemarcation);
-            System.out.println("Path: " + processedPath);
-        }
+//        int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
+//        System.out.println("Demarcation: " + segmentDemarcation);
+//        if(segmentDemarcation > 1){
+//            segment = processedPath.substring(segmentDemarcation + 1);
+//            System.out.println("Segment: " + segment);
+//            processedPath = processedPath.substring(0, segmentDemarcation);
+//            System.out.println("Path: " + processedPath);
+//        }
         return processedPath;
     }
 
