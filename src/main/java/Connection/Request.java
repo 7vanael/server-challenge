@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Request {
     private List<MultipartPart> multipartParts = new ArrayList<>();
     private String segment;
     private String cookieString;
-    private ArrayList<String> cookies = new ArrayList<>();
+    private HashMap<String, String> cookies = new HashMap<>();
 
 
     public static Request parseRequest(InputStream inputStream) throws IOException {
@@ -84,7 +85,25 @@ public class Request {
                 String headerName = line.substring(0, colonIndex).trim();
                 String headerValue = line.substring(colonIndex + 1).trim();
                 headers.put(headerName, headerValue);
-                System.out.println("Header name: " + headerName + " Header value: " + headerValue);
+                System.out.println("Header name: " + headerName + ", Header value: " + headerValue);
+            }
+        }
+        parseCookies();
+    }
+
+    private void parseCookies() {
+        if(headers.get("Cookie") != null){
+            String[] cookiePairs = headers.get("Cookie").split(";");
+            for (String cookie : cookiePairs) {
+                if (cookie.trim().isEmpty()) continue;
+
+                int equalsIndex = cookie.indexOf('=');
+                if (equalsIndex > 0) {
+                    String cookieName = cookie.substring(0, equalsIndex).trim();
+                    String cookieValue = cookie.substring(equalsIndex + 1).trim();
+                    cookies.put(cookieName, cookieValue);
+                    System.out.println("cookieName: " + cookieName + ", cookieValue: " + cookieValue);
+                }
             }
         }
     }
@@ -307,7 +326,7 @@ public class Request {
         return cookieString;
     }
 
-    public ArrayList<String> getCookies() {
+    public HashMap<String, String> getCookies() {
         return cookies;
     }
 

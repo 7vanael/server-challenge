@@ -283,16 +283,16 @@ public class RequestTest {
         mocket = new MockSocket(requestLine + headers);
         in = mocket.getInputStream();
         request = Request.parseRequest(in);
-        ArrayList<String> cookies = request.getCookies();
+        HashMap<String, String> cookies = request.getCookies();
 
         assertEquals("/guess", request.getPath());
         assertEquals("POST", request.getMethod());
-        assertEquals("target=42; guess1=35; guess2=48; guess3=40; attempts=3", request.getHeaders().get("cookie"));
-        assertTrue(cookies.contains("target=42"));
-        assertTrue(cookies.contains("guess1=35"));
-        assertTrue(cookies.contains("guess2=48"));
-        assertTrue(cookies.contains("guess3=40"));
-        assertTrue(cookies.contains("attempts=3"));
+        assertEquals("target=42; guess1=35; guess2=48; guess3=40; attempts=3", request.getHeaders().get("Cookie"));
+        assertEquals("42", cookies.get("target"));
+        assertEquals("35", cookies.get("guess1"));
+        assertEquals("48", cookies.get("guess2"));
+        assertEquals("40", cookies.get("guess3"));
+        assertEquals("3", cookies.get("attempts"));
         assertTrue(request.isValid());
     }
 

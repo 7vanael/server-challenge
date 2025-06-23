@@ -15,7 +15,7 @@ public class MockRequest extends Request {
     private byte[] body = new byte[0];
     private String queryString;
     private String cookieString;
-    private ArrayList<String> cookies = new ArrayList<>();
+    private HashMap<String, String> cookies = new HashMap<>();
 
 
     public MockRequest(String method, String path, int errorCode) {
@@ -92,11 +92,11 @@ public class MockRequest extends Request {
         return cookieString;
     }
 
-    public ArrayList<String> getCookies() {
+    public HashMap<String, String> getCookies() {
         return cookies;
     }
 
-    public void setCookies(ArrayList<String> cookies) {
+    public void setCookies(HashMap<String, String> cookies) {
         this.cookies = cookies;
     }
 }
