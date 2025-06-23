@@ -20,6 +20,8 @@ public class Request {
     private byte[] body = new byte[0];
     private List<MultipartPart> multipartParts = new ArrayList<>();
     private String segment;
+    private String cookieString;
+    private ArrayList<String> cookies = new ArrayList<>();
 
 
     public static Request parseRequest(InputStream inputStream) throws IOException {
@@ -79,15 +81,16 @@ public class Request {
         while ((line = in.readLine()) != null && !line.trim().isEmpty()) {
             int colonIndex = line.indexOf(':');
             if (colonIndex > 0) {
-                String headerName = line.substring(0, colonIndex).trim().toLowerCase();
+                String headerName = line.substring(0, colonIndex).trim();
                 String headerValue = line.substring(colonIndex + 1).trim();
                 headers.put(headerName, headerValue);
+                System.out.println("Header name: " + headerName + " Header value: " + headerValue);
             }
         }
     }
 
     private void parseBody(BufferedReader in) throws IOException {
-        String contentLengthStr = headers.get("content-length");
+        String contentLengthStr = headers.get("Content-Length");
         System.out.println("Content-Length header: " + contentLengthStr);
         if (contentLengthStr != null) {
             int contentLength = Integer.parseInt(contentLengthStr);
@@ -96,7 +99,7 @@ public class Request {
                 body = readBodyBytesFromReader(in, contentLength);
                 System.out.println("Read body, actual length: " + body.length);
 
-                String contentType = headers.get("content-type");
+                String contentType = headers.get("Content-Type");
                 System.out.println("Content-Type header: " + contentType);
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
                     System.out.println("Detected multipart form data, parsing...");
@@ -124,7 +127,7 @@ public class Request {
     }
 
     private void parseMultipartBody() {
-        String contentType = headers.get("content-type");
+        String contentType = headers.get("Content-Type");
         String boundary = extractBoundary(contentType);
 
         if (boundary == null) {
@@ -222,11 +225,11 @@ public class Request {
 
             int colonIndex = headerLine.indexOf(':');
             if (colonIndex > 0) {
-                String headerName = headerLine.substring(0, colonIndex).trim().toLowerCase();
+                String headerName = headerLine.substring(0, colonIndex).trim();
                 String headerValue = headerLine.substring(colonIndex + 1).trim();
                 part.headers.put(headerName, headerValue);
 
-                if (headerName.equals("content-disposition")) {
+                if (headerName.equals("Content-Disposition")) {
                     parseContentDisposition(headerValue, part);
                 }
             }
@@ -285,7 +288,7 @@ public class Request {
     public String getSegment() {return segment;}
 
     public String getHeader(String name) {
-        return headers.get(name.toLowerCase());
+        return headers.get(name);
     }
 
     public MultipartPart getMultipartPart(String name) {
@@ -299,6 +302,18 @@ public class Request {
         MultipartPart part = getMultipartPart(name);
         return part != null ? part.getContentAsString() : null;
     }
+
+    public String getCookieString() {
+        return cookieString;
+    }
+
+    public ArrayList<String> getCookies() {
+        return cookies;
+    }
+
+//    public void setCookies(ArrayList<String> cookies) {
+//        this.cookies = cookies;
+//    }
 
     public static class MultipartPart {
         private HashMap<String, String> headers = new HashMap<>();
@@ -316,7 +331,7 @@ public class Request {
         }
 
         public String getContentType() {
-            return headers.get("content-type");
+            return headers.get("Content-Type");
         }
 
         public boolean isFile() {

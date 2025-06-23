@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +22,7 @@ public class RequestTest {
     private String target;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         mocket = null;
         in = null;
         target = null;
@@ -51,7 +54,7 @@ public class RequestTest {
     }
 
     @Test
-    public void emptyGETParsesIntoParts() throws IOException{
+    public void emptyGETParsesIntoParts() throws IOException {
         target = "";
         processGetRequest();
 
@@ -85,7 +88,7 @@ public class RequestTest {
     }
 
     @Test
-    public void requestHeadersAreParsed() throws IOException{
+    public void requestHeadersAreParsed() throws IOException {
         String requestLine = "GET /form HTTP/1.1\r\n";
         String headers = "Host: localhost:7654\r\n" +
                 "Content-Type: multipart/form-data; boundary=123456\r\n" +
@@ -101,7 +104,7 @@ public class RequestTest {
     }
 
     @Test
-    public void requestWithQueryParametersParses() throws IOException{
+    public void requestWithQueryParametersParses() throws IOException {
         target = "/form?foo=1&bar=2";
         processGetRequest();
 
@@ -111,7 +114,7 @@ public class RequestTest {
     }
 
     @Test
-    public void requestWithSegmentParses() throws IOException{
+    public void requestWithSegmentParses() throws IOException {
         target = "/ping/2";
         processGetRequest();
 
@@ -198,23 +201,28 @@ public class RequestTest {
     }
 
     @Test
-    public void nonMultipartRequestStillWorks() throws IOException {
+    public void nonMultipartRequestParses() throws IOException {
         String requestLine = "POST /form HTTP/1.1\r\n";
         String body = "username=john&password=secret";
         String headers = "Host: localhost:7654\r\n" +
-                "Content-Type: application/x-www-form-urlencoded\r\n" +
+                "Content-Type: application/pdf\r\n" +
                 "Content-Length: " + body.getBytes(StandardCharsets.UTF_8).length + "\r\n\r\n";
 
         mocket = new MockSocket(requestLine + headers + body);
         in = mocket.getInputStream();
         request = Request.parseRequest(in);
+        HashMap<String, String> parsedHeaders = request.getHeaders();
+        for (HashMap.Entry<String, String> entry : parsedHeaders.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+        }
+        System.out.println(new String(request.getBody()));
 
         assertTrue(request.isValid());
         assertEquals("POST", request.getMethod());
         assertEquals("/form", request.getPath());
-        assertEquals("application/x-www-form-urlencoded", request.getHeaders().get("content-type"));
+        assertEquals("application/pdf", request.getHeaders().get("Content-Type"));
         assertEquals(body, new String(request.getBody()));
-        assertEquals(0, request.getMultipartParts().size()); // No multipart parts
+        assertEquals(0, request.getMultipartParts().size());
     }
 
     @Test
@@ -252,7 +260,7 @@ public class RequestTest {
     }
 
     @Test
-    public void requestWithQueryParametersStillWorks() throws IOException {
+    public void requestWithQueryParametersProvidesQueryString() throws IOException {
         String requestLine = "GET /form?foo=1&bar=2 HTTP/1.1\r\n";
         String headers = "Host: localhost:7654\r\n\r\n";
 
@@ -263,6 +271,28 @@ public class RequestTest {
         assertEquals("/form", request.getPath());
         assertEquals("GET", request.getMethod());
         assertEquals("foo=1&bar=2", request.getQueryString());
+        assertTrue(request.isValid());
+    }
+
+    @Test
+    public void requestWithCookiesParsesCookies() throws IOException {
+        String requestLine = "POST /guess HTTP/1.1\r\n";
+        String headers = "Host: localhost\r\n" +
+                "Cookie: target=42; guess1=35; guess2=48; guess3=40; attempts=3\r\n\r\n";
+
+        mocket = new MockSocket(requestLine + headers);
+        in = mocket.getInputStream();
+        request = Request.parseRequest(in);
+        ArrayList<String> cookies = request.getCookies();
+
+        assertEquals("/guess", request.getPath());
+        assertEquals("POST", request.getMethod());
+        assertEquals("target=42; guess1=35; guess2=48; guess3=40; attempts=3", request.getHeaders().get("cookie"));
+        assertTrue(cookies.contains("target=42"));
+        assertTrue(cookies.contains("guess1=35"));
+        assertTrue(cookies.contains("guess2=48"));
+        assertTrue(cookies.contains("guess3=40"));
+        assertTrue(cookies.contains("attempts=3"));
         assertTrue(request.isValid());
     }
 
