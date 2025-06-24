@@ -197,11 +197,6 @@ public class GuessHandlerTest {
                 }
                 return cookieMap;
             }
-
-//            @Override
-//            public HashMap<String, String> getFormData() {
-//                return new HashMap<>(); // Empty for GET requests
-//            }
         };
     }
 }

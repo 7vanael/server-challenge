@@ -18,7 +18,7 @@ public class FormHandlerTest {
 
     @BeforeEach
     void setUp() {
-        formHandler = new FormHandler(Paths.get("/var/www"), "TestServer/1.0");
+        formHandler = new FormHandler(Paths.get("testroot"), "TestServer/1.0");
     }
 
     @Test

@@ -49,7 +49,6 @@ public class GuessHandler implements RouteHandler {
         String html = generateFormResponse(gameState, errorMessage);
         Response response = createHtmlResponse(200, html);
         setGameStateCookies(response, gameState);
-//        addGameStateCookies(response);
         return response;
     }
 
@@ -58,7 +57,7 @@ public class GuessHandler implements RouteHandler {
             try{
                 int guess = Integer.parseInt(guessString.trim());
                 if(guess >= 1 && guess <= 100){
-                    gameState.addGuess(guess); // This updates the game state!
+                    gameState.addGuess(guess);
                 }else {
                     errorMessage = "Guess must be a number between 1 and 100";
                 }
@@ -91,16 +90,7 @@ public class GuessHandler implements RouteHandler {
         Response response = createHtmlResponse(200, html);
 
         setGameStateCookies(response, gameState);
-//        addGameStateCookies(response);
         return response;
-    }
-
-    private static void addGameStateCookies(Response response) {
-        System.out.println("**Adding cookies to headers: **");
-        for (String cookie : response.getCookies()) {
-            System.out.println("  Set-Cookie: " + cookie);
-            response.addHeader("Set-Cookie", cookie);
-        }
     }
 
     private String generateFormResponse(GameState gameState, String errorMessage) {
@@ -162,17 +152,15 @@ public class GuessHandler implements RouteHandler {
         }
         GameState gameState = new GameState();
 
-        // Read target
         String targetStr = cookies.get("target");
         if (targetStr != null) {
             try {
                 gameState.target = Integer.parseInt(targetStr);
             } catch (NumberFormatException e) {
-                gameState.target = -1; // Invalid, will trigger new game
+                gameState.target = -1;
             }
         }
 
-        // Read attempts
         String attemptsStr = cookies.get("attempts");
         if (attemptsStr != null) {
             try {
@@ -182,22 +170,15 @@ public class GuessHandler implements RouteHandler {
             }
         }
 
-        // Read all guesses (guess1, guess2, etc.)
         for (int i = 1; i <= gameState.attempts; i++) {
             String guessStr = cookies.get("guess" + i);
             if (guessStr != null) {
                 try {
                     gameState.priorGuesses.add(Integer.parseInt(guessStr));
                 } catch (NumberFormatException e) {
-                    // Skip invalid guess
                 }
             }
         }
-        System.out.println("DEBUG: GameState after reading cookies:");
-        System.out.println("  target = " + gameState.target);
-        System.out.println("  attempts = " + gameState.attempts);
-        System.out.println("  priorGuesses size = " + gameState.priorGuesses.size());
-
         return gameState;
     }
 
@@ -224,13 +205,10 @@ public class GuessHandler implements RouteHandler {
         System.out.println("  attempts = " + gameState.attempts);
         System.out.println("  priorGuesses = " + gameState.priorGuesses);
 
-        // Set target
         response.addCookie("target=" + gameState.target + "; Path=/; Max-Age=3600");
 
-        // Set attempts
         response.addCookie("attempts=" + gameState.attempts + "; Path=/; Max-Age=3600");
 
-        // Set each guess
         for (int i = 0; i < gameState.priorGuesses.size(); i++) {
             response.addCookie("guess" + (i + 1) + "=" + gameState.priorGuesses.get(i) + "; Path=/; Max-Age=3600");
         }

@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class Request {
     private String method;
@@ -28,18 +27,16 @@ public class Request {
     public static Request parseRequest(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1));
         Request request = new Request();
-        request.parseRequestInternal(reader, inputStream);
+        request.parseRequestInternal(reader);
         return request;
     }
 
-    private void parseRequestInternal(BufferedReader in, InputStream inputStream) throws IOException {
-        System.out.println("Starting request parsing...");
+    private void parseRequestInternal(BufferedReader in) throws IOException {
         try {
             String requestLine = in.readLine();
             System.out.println("Request line: " + requestLine);
             if (requestLine == null || requestLine.trim().isEmpty()) {
                 errorCode = 400;
-                System.out.println("Empty request line, setting error code 400");
                 return;
             }
 
@@ -58,8 +55,6 @@ public class Request {
             parseBody(in);
 
             valid = true;
-            System.out.println("Request parsing completed successfully");
-
         } catch (Exception e) {
             System.out.println("Exception during parsing: " + e.getMessage());
             errorCode = 400;
@@ -85,7 +80,6 @@ public class Request {
                 String headerName = line.substring(0, colonIndex).trim().toLowerCase();
                 String headerValue = line.substring(colonIndex + 1).trim();
                 headers.put(headerName, headerValue);
-                System.out.println("Header name: " + headerName + ", Header value: " + headerValue);
             }
         }
         parseCookies();
@@ -104,7 +98,6 @@ public class Request {
                     String cookieName = cookie.substring(0, equalsIndex).trim();//Does this need to go to lowercase also?
                     String cookieValue = cookie.substring(equalsIndex + 1).trim();
                     cookies.put(cookieName, cookieValue);
-                    System.out.println("cookieName: " + cookieName + ", cookieValue: " + cookieValue);
                 }
             }
         }
@@ -112,19 +105,16 @@ public class Request {
 
     private void parseBody(BufferedReader in) throws IOException {
         String contentLengthStr = headers.get("content-length");
-        System.out.println("Content-Length header: " + contentLengthStr);
+//        System.out.println("Content-Length header: " + contentLengthStr);
         if (contentLengthStr != null) {
             int contentLength = Integer.parseInt(contentLengthStr);
-            System.out.println("Parsed content length: " + contentLength);
+//            System.out.println("Parsed content length: " + contentLength);
             if (contentLength > 0) {
                 body = readBodyBytesFromReader(in, contentLength);
-                System.out.println("Read body, actual length: " + body.length);
+//                System.out.println("Read body, actual length: " + body.length);
 
                 String contentType = headers.get("content-type");
-                System.out.println("***CONTENT TYPE RECEIVED***");
-                System.out.println("Content-Type header: " + contentType);
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
-                    System.out.println("Detected multipart form data, parsing...");
                     parseMultipartBody();
                 } else {
                     System.out.println("Not multipart form data");
@@ -158,18 +148,8 @@ public class Request {
 
         String bodyStr = new String(body, StandardCharsets.ISO_8859_1);
 
-        System.out.println("Boundary: " + boundary);
-        System.out.println("Body length: " + body.length);
-        System.out.println("Body content: " + bodyStr.replace("\r", "\\r").replace("\n", "\\n"));
-
         String boundaryPattern = "--" + boundary;
         String[] parts = bodyStr.split(boundaryPattern);
-
-        // just for display
-        System.out.println("Parts found: " + parts.length);
-        for (int i = 0; i < parts.length; i++) {
-            System.out.println("Part " + i + ": '" + parts[i].replace("\r", "\\r").replace("\n", "\\n") + "'");
-        }
 
         for (String part : parts) {
             part = part.trim();
@@ -204,39 +184,23 @@ public class Request {
     }
 
     private MultipartPart parseMultipartPart(String partContent) {
-        System.out.println("Parsing part: '" + partContent.replace("\r", "\\r").replace("\n", "\\n") + "'");
 
-        // Find division of headers from content
         int emptyLineIndex = partContent.indexOf("\r\n\r\n");
-        if (emptyLineIndex == -1) {
-            emptyLineIndex = partContent.indexOf("\n\n");
-        }
-
-        if (emptyLineIndex == -1) {
-            System.out.println("No empty line found in part");
-            return null;
-        }
 
         String headersSection = partContent.substring(0, emptyLineIndex);
-        String contentSection = partContent.substring(emptyLineIndex + (partContent.contains("\r\n\r\n") ? 4 : 2));
-
-        System.out.println("Headers: '" + headersSection + "'");
-        System.out.println("Content: '" + contentSection + "'");
+        String contentSection = partContent.substring(emptyLineIndex + 4);
 
         MultipartPart part = new MultipartPart();
 
-        String[] headerLines = headersSection.split("\r?\n");
+        String[] headerLines = headersSection.split("\r\n");
         parseMultipartHeaders(headerLines, part);
 
         if (contentSection.endsWith("\r\n")) {
             contentSection = contentSection.substring(0, contentSection.length() - 2);
-        } else if (contentSection.endsWith("\n")) {
-            contentSection = contentSection.substring(0, contentSection.length() - 1);
         }
 
         part.content = contentSection.getBytes(StandardCharsets.ISO_8859_1);
-
-        System.out.println("Parsed part - name: " + part.name + ", content length: " + part.content.length);
+//        System.out.println("Parsed part - name: " + part.name + ", content length: " + part.content.length);
 
         return part;
     }
@@ -280,19 +244,14 @@ public class Request {
 
     private String processPath(String rawPath) {
         String processedPath = rawPath;
-        System.out.println("Request processing Path. Raw path: " + rawPath);
-
         if (rawPath.isEmpty() || rawPath.equals("/") || rawPath.contains("..")) {
             processedPath = "/index.html";
         }
         if (rawPath.startsWith("/ping/")) {
             int segmentDemarcation = processedPath.substring(1).indexOf("/")  + 1; //Skip the leading /
-            System.out.println("Demarcation: " + segmentDemarcation);
             if(segmentDemarcation > 1){
                 segment = processedPath.substring(segmentDemarcation + 1);
-                System.out.println("Segment: " + segment);
                 processedPath = processedPath.substring(0, segmentDemarcation);
-                System.out.println("Path: " + processedPath);
             }
         }
         return processedPath;
@@ -332,10 +291,6 @@ public class Request {
     public HashMap<String, String> getCookies() {
         return cookies;
     }
-
-//    public void setCookies(ArrayList<String> cookies) {
-//        this.cookies = cookies;
-//    }
 
     public static class MultipartPart {
         private HashMap<String, String> headers = new HashMap<>();

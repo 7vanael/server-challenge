@@ -220,7 +220,7 @@ public class RequestTest {
         assertTrue(request.isValid());
         assertEquals("POST", request.getMethod());
         assertEquals("/form", request.getPath());
-        assertEquals("application/pdf", request.getHeaders().get("Content-Type"));
+        assertEquals("application/pdf", request.getHeaders().get("content-type"));
         assertEquals(body, new String(request.getBody()));
         assertEquals(0, request.getMultipartParts().size());
     }
@@ -287,7 +287,7 @@ public class RequestTest {
 
         assertEquals("/guess", request.getPath());
         assertEquals("POST", request.getMethod());
-        assertEquals("target=42; guess1=35; guess2=48; guess3=40; attempts=3", request.getHeaders().get("Cookie"));
+        assertEquals("target=42; guess1=35; guess2=48; guess3=40; attempts=3", request.getHeaders().get("cookie"));
         assertEquals("42", cookies.get("target"));
         assertEquals("35", cookies.get("guess1"));
         assertEquals("48", cookies.get("guess2"));
