@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ResponseTest {
     private Response response;
     private String serverName = "Challenge Test";
@@ -20,10 +23,10 @@ public class ResponseTest {
     public void defaultConstructorSetsCorrectDefaults() {
         response = new Response(serverName);
 
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("text/html", response.getContentType());
-        Assertions.assertEquals(0, response.getBody().length);
-        Assertions.assertTrue(response.getHeaders().isEmpty());
+        assertEquals(200, response.getStatusCode());
+        assertEquals("text/html", response.getContentType());
+        assertEquals(0, response.getBody().length);
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
@@ -31,10 +34,10 @@ public class ResponseTest {
         String body = "<html><body>Hello World</body></html>";
         response = new Response(serverName, 200, "text/html", body);
 
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("text/html", response.getContentType());
+        assertEquals(200, response.getStatusCode());
+        assertEquals("text/html", response.getContentType());
         Assertions.assertArrayEquals(body.getBytes(), response.getBody());
-        Assertions.assertTrue(response.getHeaders().isEmpty());
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
@@ -42,10 +45,10 @@ public class ResponseTest {
         byte[] body = "Some File Content Here".getBytes();
         response = new Response(serverName, 200, "application/octet-stream", body);
 
-        Assertions.assertEquals(200, response.getStatusCode());
-        Assertions.assertEquals("application/octet-stream", response.getContentType());
+        assertEquals(200, response.getStatusCode());
+        assertEquals("application/octet-stream", response.getContentType());
         Assertions.assertArrayEquals(body, response.getBody());
-        Assertions.assertTrue(response.getHeaders().isEmpty());
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
@@ -54,7 +57,7 @@ public class ResponseTest {
         Response result = response.addHeader("Cache-Control", "no-cache");
 
         Assertions.assertSame(response, result);
-        Assertions.assertEquals("no-cache", response.getHeaders().get("Cache-Control"));
+        assertEquals("no-cache", response.getHeaders().get("Cache-Control"));
     }
 
     @Test
@@ -65,10 +68,10 @@ public class ResponseTest {
                 .addHeader("Header3", "value3");
 
         Map<String, String> headers = response.getHeaders();
-        Assertions.assertEquals(3, headers.size());
-        Assertions.assertEquals("value1", headers.get("Header1"));
-        Assertions.assertEquals("value2", headers.get("Header2"));
-        Assertions.assertEquals("value3", headers.get("Header3"));
+        assertEquals(3, headers.size());
+        assertEquals("value1", headers.get("Header1"));
+        assertEquals("value2", headers.get("Header2"));
+        assertEquals("value3", headers.get("Header3"));
     }
 
     @Test
@@ -91,8 +94,24 @@ public class ResponseTest {
         Map<String, String> retrievedHeaders = response.getHeaders();
         retrievedHeaders.put("Malicious-Header", "malicious-value");
 
-        Assertions.assertEquals(1, response.getHeaders().size());
+        assertEquals(1, response.getHeaders().size());
         Assertions.assertNull(response.getHeaders().get("Malicious-Header"));
+    }
+
+    @Test
+    public void cookiesCanBeAddedAndRetrieved(){
+        response = new Response(serverName);
+        response.addCookie("target=42");
+        assertTrue(response.getCookies().contains("target=42"));
+    }
+
+    @Test
+    public void multipleCookiesCanBeAddedAndChained(){
+        response = new Response(serverName);
+        response.addCookie("target=42")
+                .addCookie("guess1=37");
+        assertTrue(response.getCookies().contains("target=42"));
+        assertTrue(response.getCookies().contains("guess1=37"));
     }
 
 }

@@ -7,6 +7,7 @@ import Router.FileHandler;
 import Router.HelloHandler;
 import Router.FormHandler;
 import Router.PingHandler;
+import Router.GuessHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,8 @@ public class Main {
         router.addRoute("GET", "/form", new FormHandler(rootPath, name));
         router.addRoute("POST", "/form", new FormHandler(rootPath, name));
         router.addRoute("GET", "/ping", new PingHandler(rootPath, name));
+        router.addRoute("GET", "/guess", new GuessHandler(rootPath, name));
+        router.addRoute("POST", "/guess", new GuessHandler(rootPath, name));
 
         router.addRoute("GET", "/*", new FileHandler(rootPath, name));
 

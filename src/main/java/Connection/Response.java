@@ -2,7 +2,9 @@ package Connection;
 
 import org.example.HttpConstants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Response {
@@ -13,6 +15,7 @@ public class Response {
     private String contentType;
     private byte[] body;
     private Map<String, String> headers;
+    private List<String> cookies = new ArrayList<>();
 
     public Response(String serverName) {
         this.serverName = serverName;
@@ -41,6 +44,15 @@ public class Response {
         this.headers = new HashMap<>();
     }
 
+
+    public Response addCookie(String cookieValue){
+        cookies.add(cookieValue);
+        return this;
+    }
+
+    public List<String> getCookies(){
+        return new ArrayList<>(cookies);
+    }
 
     public Response setBody(String body) {
         this.body = body.getBytes();
