@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Request {
     private String method;
@@ -82,7 +82,7 @@ public class Request {
         while ((line = in.readLine()) != null && !line.trim().isEmpty()) {
             int colonIndex = line.indexOf(':');
             if (colonIndex > 0) {
-                String headerName = line.substring(0, colonIndex).trim();
+                String headerName = line.substring(0, colonIndex).trim().toLowerCase();
                 String headerValue = line.substring(colonIndex + 1).trim();
                 headers.put(headerName, headerValue);
                 System.out.println("Header name: " + headerName + ", Header value: " + headerValue);
@@ -92,16 +92,16 @@ public class Request {
     }
 
     private void parseCookies() {
-        String cookieHeader = headers.get("Cookie");
+        String cookieHeader = headers.get("cookie");
         if(cookieHeader != null){
             this.cookieString = cookieHeader;
-            String[] cookiePairs = headers.get("Cookie").split(";");
+            String[] cookiePairs = headers.get("cookie").split(";");
             for (String cookie : cookiePairs) {
                 if (cookie.trim().isEmpty()) continue;
 
                 int equalsIndex = cookie.indexOf('=');
                 if (equalsIndex > 0) {
-                    String cookieName = cookie.substring(0, equalsIndex).trim();
+                    String cookieName = cookie.substring(0, equalsIndex).trim();//Does this need to go to lowercase also?
                     String cookieValue = cookie.substring(equalsIndex + 1).trim();
                     cookies.put(cookieName, cookieValue);
                     System.out.println("cookieName: " + cookieName + ", cookieValue: " + cookieValue);
@@ -111,7 +111,7 @@ public class Request {
     }
 
     private void parseBody(BufferedReader in) throws IOException {
-        String contentLengthStr = headers.get("Content-Length");
+        String contentLengthStr = headers.get("content-length");
         System.out.println("Content-Length header: " + contentLengthStr);
         if (contentLengthStr != null) {
             int contentLength = Integer.parseInt(contentLengthStr);
@@ -120,7 +120,7 @@ public class Request {
                 body = readBodyBytesFromReader(in, contentLength);
                 System.out.println("Read body, actual length: " + body.length);
 
-                String contentType = headers.get("Content-Type");
+                String contentType = headers.get("content-type");
                 System.out.println("***CONTENT TYPE RECEIVED***");
                 System.out.println("Content-Type header: " + contentType);
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
@@ -149,7 +149,7 @@ public class Request {
     }
 
     private void parseMultipartBody() {
-        String contentType = headers.get("Content-Type");
+        String contentType = headers.get("content-type");
         String boundary = extractBoundary(contentType);
 
         if (boundary == null) {
@@ -247,11 +247,11 @@ public class Request {
 
             int colonIndex = headerLine.indexOf(':');
             if (colonIndex > 0) {
-                String headerName = headerLine.substring(0, colonIndex).trim();
+                String headerName = headerLine.substring(0, colonIndex).trim().toLowerCase();
                 String headerValue = headerLine.substring(colonIndex + 1).trim();
                 part.headers.put(headerName, headerValue);
 
-                if (headerName.equals("Content-Disposition")) {
+                if (headerName.equals("content-disposition")) {
                     parseContentDisposition(headerValue, part);
                 }
             }
@@ -310,7 +310,7 @@ public class Request {
     public String getSegment() {return segment;}
 
     public String getHeader(String name) {
-        return headers.get(name);
+        return headers.get(name.toLowerCase());
     }
 
     public MultipartPart getMultipartPart(String name) {
@@ -353,7 +353,7 @@ public class Request {
         }
 
         public String getContentType() {
-            return headers.get("Content-Type");
+            return headers.get("content-type");
         }
 
         public boolean isFile() {

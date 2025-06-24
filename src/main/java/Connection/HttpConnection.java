@@ -45,8 +45,10 @@ public class HttpConnection extends Connection {
         for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
             headerBuilder.append(header.getKey()).append(": ").append(header.getValue()).append("\r\n");
         }
-        for(String cookie : response.getCookies()){
-            headerBuilder.append("Set-Cookie: ").append(cookie).append("\r\n");
+        if (response.getCookies() != null) {
+            for(String cookie : response.getCookies()){
+                headerBuilder.append("Set-Cookie: ").append(cookie).append("\r\n");
+            }
         }
         headerBuilder.append("\r\n");
         out.write(headerBuilder.toString().getBytes(StandardCharsets.UTF_8));
