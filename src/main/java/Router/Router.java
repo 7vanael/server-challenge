@@ -29,10 +29,7 @@ public class Router {
         if (request.getErrorCode() != 0) {
             return createErrorResponse(request.getErrorCode());
         }
-        System.out.println("In router, matching request: ");
-        System.out.println("Request method: " + request.getMethod());
-        System.out.println("Request path: " + request.getPath());
-        System.out.println(routes);
+
         for (Route route : routes) {
             if (route.matches(request.getMethod(), request.getPath())) {
                 System.out.println("Route matched! About to call route.handle()");

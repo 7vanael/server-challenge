@@ -92,7 +92,9 @@ public class Request {
     }
 
     private void parseCookies() {
-        if(headers.get("Cookie") != null){
+        String cookieHeader = headers.get("Cookie");
+        if(cookieHeader != null){
+            this.cookieString = cookieHeader;
             String[] cookiePairs = headers.get("Cookie").split(";");
             for (String cookie : cookiePairs) {
                 if (cookie.trim().isEmpty()) continue;
@@ -119,6 +121,7 @@ public class Request {
                 System.out.println("Read body, actual length: " + body.length);
 
                 String contentType = headers.get("Content-Type");
+                System.out.println("***CONTENT TYPE RECEIVED***");
                 System.out.println("Content-Type header: " + contentType);
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
                     System.out.println("Detected multipart form data, parsing...");
