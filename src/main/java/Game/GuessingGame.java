@@ -14,11 +14,8 @@ public class GuessingGame {
     private String errorMessage = null;
 
     public GuessingGame(Request request) {
-        System.out.println("Guessing Game Constructor");
-        System.out.println("query string: " + request.getQueryString());
         boolean isNewGameRequest = request.getQueryString() != null && request.getQueryString().contains("newgame=true");
 
-        System.out.println("is new game request: " + isNewGameRequest);
         if (isNewGameRequest) {
             System.out.println("Starting new game- not loading cookies from request");
             startNewGame();

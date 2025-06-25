@@ -6,7 +6,6 @@ import org.example.RouteHandler;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -36,9 +35,7 @@ public class PingHandler implements RouteHandler {
             System.out.println("Interruption occurred during sleep: " + e.getMessage());
         }
         endTime = LocalDateTime.now();
-        System.out.println("Start time: " + startTime.format(formatter));
-        System.out.println("End time: " + endTime.format(formatter));
-        System.out.println("Duration: " + Duration.between(startTime, endTime).getSeconds());
+
         String pingHtml = "<html><head><title>Ping</title></head>" +
                 "<body><h2>Ping</h2>" +
                 "<li>start time: " + startTime.format(formatter) + "</li>" +
