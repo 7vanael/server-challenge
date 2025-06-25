@@ -68,10 +68,6 @@ public class MockRequest extends Request {
         return headers;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
     public void setHeader(String name, String value) {
         headers.put(name, value);
     }

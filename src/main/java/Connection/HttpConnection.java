@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HttpConnection extends Connection {
-    private boolean active = true;
     private Router router;
 
     public HttpConnection(Socket clientSocket, String root, Router router) {
@@ -57,9 +56,5 @@ public class HttpConnection extends Connection {
             out.write(response.getBody());
         }
         out.flush();
-    }
-
-    public boolean getActive(){
-        return active;
     }
 }

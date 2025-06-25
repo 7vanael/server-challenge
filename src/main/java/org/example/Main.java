@@ -47,10 +47,8 @@ public class Main {
         router.addRoute("GET", "/*", new FileHandler(rootPath, name));
 
         Server server = new Server(port, root, router);
-        System.out.println("new Server initialized");
 
         server.startServer();
-        System.out.println("Called start server from main");
     }
 
     private static boolean parseArgs(String[] args) {

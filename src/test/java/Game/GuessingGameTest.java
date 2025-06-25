@@ -157,6 +157,7 @@ public class GuessingGameTest {
         assertTrue(game.getPriorGuesses().get(1) > game.getTarget());
         assertEquals(game.getPriorGuesses().get(2).intValue(), game.getTarget());
     }
+
     @Test
     public void maxAttemptsEndsGameOn7thGuess() {
         MockRequest request = new MockRequest("POST", "/guess", 0);

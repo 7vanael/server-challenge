@@ -14,20 +14,27 @@ public class GuessingGame {
     private String errorMessage = null;
 
     public GuessingGame(Request request) {
+        System.out.println("Guessing Game Constructor");
+        System.out.println("query string: " + request.getQueryString());
         boolean isNewGameRequest = request.getQueryString() != null && request.getQueryString().contains("newgame=true");
 
+        System.out.println("is new game request: " + isNewGameRequest);
         if (isNewGameRequest) {
+            System.out.println("Starting new game- not loading cookies from request");
             startNewGame();
         } else {
+            System.out.println("Loading cookies from request");
             HashMap<String, String> cookies = request.getCookies();
             populateTarget(cookies);
             populateAttempts(cookies);
             populatePriorGuesses(cookies);
             if(target == -1){
+                System.out.println("No target found in request, starting a new game");
                 startNewGame();
             }
         }
         parseGuess(request);
+        System.out.println("Final state of game constructor; Target: " + target + "attempts: " + attempts + "guesses: " + priorGuesses);
     }
 
     private void populateTarget(HashMap<String, String> cookies) {
@@ -114,11 +121,6 @@ public class GuessingGame {
     public boolean isGameWon() {
         return !inProgress && !priorGuesses.isEmpty() &&
                 priorGuesses.get(priorGuesses.size() - 1) == target;
-    }
-
-    public boolean isGameLost() {
-        return !inProgress && attempts >= 7 &&
-                (priorGuesses.isEmpty() || priorGuesses.get(priorGuesses.size() - 1) != target);
     }
 
     public int getTarget() {

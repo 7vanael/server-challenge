@@ -31,7 +31,7 @@ public class Request {
         return request;
     }
 
-    private void parseRequestInternal(BufferedReader in) throws IOException {
+    private void parseRequestInternal(BufferedReader in) {
         try {
             String requestLine = in.readLine();
             System.out.println("Request line: " + requestLine);
@@ -282,10 +282,6 @@ public class Request {
     public String getMultipartValue(String name) {
         MultipartPart part = getMultipartPart(name);
         return part != null ? part.getContentAsString() : null;
-    }
-
-    public String getCookieString() {
-        return cookieString;
     }
 
     public HashMap<String, String> getCookies() {
