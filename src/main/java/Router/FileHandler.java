@@ -22,8 +22,6 @@ public class FileHandler implements RouteHandler {
 
     @Override
     public Response handle(Request request) throws IOException {
-        System.out.println("FileHandler received request: " + request.getPath());
-
         String requestPath = request.getPath();
 
         if (requestPath.startsWith("/")) {

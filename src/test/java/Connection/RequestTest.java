@@ -4,13 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -211,11 +207,6 @@ public class RequestTest {
         mocket = new MockSocket(requestLine + headers + body);
         in = mocket.getInputStream();
         request = Request.parseRequest(in);
-        HashMap<String, String> parsedHeaders = request.getHeaders();
-        for (HashMap.Entry<String, String> entry : parsedHeaders.entrySet()) {
-            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
-        }
-        System.out.println(new String(request.getBody()));
 
         assertTrue(request.isValid());
         assertEquals("POST", request.getMethod());

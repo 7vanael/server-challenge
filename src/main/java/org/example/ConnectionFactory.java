@@ -7,5 +7,4 @@ import java.net.Socket;
 
 public interface ConnectionFactory {
     Connection createConnection(Socket clientSocket, String rootDirectory, Router router);
-    int getNextConnectionId();
 }

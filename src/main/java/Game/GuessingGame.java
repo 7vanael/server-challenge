@@ -17,21 +17,17 @@ public class GuessingGame {
         boolean isNewGameRequest = request.getQueryString() != null && request.getQueryString().contains("newgame=true");
 
         if (isNewGameRequest) {
-            System.out.println("Starting new game- not loading cookies from request");
             startNewGame();
         } else {
-            System.out.println("Loading cookies from request");
             HashMap<String, String> cookies = request.getCookies();
             populateTarget(cookies);
             populateAttempts(cookies);
             populatePriorGuesses(cookies);
             if(target == -1){
-                System.out.println("No target found in request, starting a new game");
                 startNewGame();
             }
         }
         parseGuess(request);
-        System.out.println("Final state of game constructor; Target: " + target + "attempts: " + attempts + "guesses: " + priorGuesses);
     }
 
     private void populateTarget(HashMap<String, String> cookies) {
@@ -40,7 +36,6 @@ public class GuessingGame {
             try {
                 this.target = Integer.parseInt(targetStr);
             } catch (NumberFormatException e) {
-                System.out.println("Request returned a cookie with a non-numeric target. Fishy.");
             }
         }
     }
@@ -108,7 +103,6 @@ public class GuessingGame {
 
     public void startNewGame() {
         target = (int) (Math.random() * 100) + 1;
-        System.out.println("NEW GAME STARTED; new target: " + target);
         attempts = 0;
         priorGuesses.clear();
         errorMessage = null;

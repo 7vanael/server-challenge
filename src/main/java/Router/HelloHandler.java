@@ -19,8 +19,6 @@ public class HelloHandler implements RouteHandler {
 
     @Override
     public Response handle(Request request) throws IOException {
-        Path indexPath = rootPath.resolve(request.getPath());
-
         String welcomeHtml = "<html><head><title>Hello, Welcome!</title></head>" +
                 "<body><h1>Hello, Welcome!</h1>" +
                 "<p>You've reached the Hello page on Server: " + serverName + "</p></body></html>";

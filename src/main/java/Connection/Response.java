@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Response {
-    private static final String PROTOCOL_VERSION = "HTTP/1.1";
     private final String serverName;
     private int statusCode;
     private String statusText;

@@ -71,7 +71,6 @@ public class DirectoryHandlerTest {
         response = handler.handle(request);
 
         String html = new String(response.getBody());
-        System.out.println(html);
         assertTrue(html.contains("<li><a href="));
         assertTrue(html.contains("/index.html"));
         assertTrue(html.contains(">index.html</a></li>"));

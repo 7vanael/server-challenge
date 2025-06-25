@@ -2,9 +2,14 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
+import org.example.Main;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -19,7 +24,20 @@ public class PingHandlerTest {
     private Path rootPath = Paths.get("testroot");
     private PingHandler handler = new PingHandler(rootPath, serverName);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static final PrintStream originalOut = System.out;
 
+
+    @BeforeEach
+    public void setUp(){
+        outContent.reset();
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @AfterAll
+    public static void tearDown(){
+        System.setOut(originalOut);
+    }
 
     @Test
     public void pingWithoutArgumentImmediatelyReturns() throws IOException {

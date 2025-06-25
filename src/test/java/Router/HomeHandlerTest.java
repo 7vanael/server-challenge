@@ -31,7 +31,6 @@ public class HomeHandlerTest {
         Request request = createMockRequest("GET", "index.html");
 
         Response response = handler.handle(request);
-        String body = new String(response.getBody());
 
         Assertions.assertEquals("text/html", response.getHeaders().get("Content-Type"));
         Assertions.assertNotNull(response.getHeaders().get("Content-Length"));

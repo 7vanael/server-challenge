@@ -121,11 +121,6 @@ public class GuessHandler implements RouteHandler {
     }
 
     private void setGameStateCookies(Response response, GuessingGame gameState) {
-        System.out.println("** Cookies being set: **");
-        System.out.println("  target = " + gameState.getTarget());
-        System.out.println("  attempts = " + gameState.getAttempts());
-        System.out.println("  priorGuesses = " + gameState.getPriorGuesses());
-
         response.addCookie("target=" + gameState.getTarget() + "; Path=/; Max-Age=3600");
         response.addCookie("attempts=" + gameState.getAttempts() + "; Path=/; Max-Age=3600");
 

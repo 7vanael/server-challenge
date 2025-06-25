@@ -32,7 +32,6 @@ public class FileHandlerTest {
 
     @Test
     public void testHandleJPGFileReturnsCorrectContentType() throws IOException {
-        // Assumes you have a JPG file in testroot/img/
         Request request = createMockRequest("GET", "/img/autobot.jpg");
 
         Response response = handler.handle(request);
@@ -45,7 +44,6 @@ public class FileHandlerTest {
 
     @Test
     public void testHandlePNGFileReturnsCorrectContentType() throws IOException {
-        // Assumes you have a PNG file in testroot/img/
         Request request = createMockRequest("GET", "/img/decepticon.png");
 
         Response response = handler.handle(request);
@@ -58,7 +56,6 @@ public class FileHandlerTest {
 
     @Test
     public void testHandlePDFFileReturnsCorrectContentType() throws IOException {
-        // Assumes you have a PDF file in testroot/
         Request request = createMockRequest("GET", "/hello.pdf");
 
         Response response = handler.handle(request);
@@ -81,7 +78,6 @@ public class FileHandlerTest {
 
     @Test
     public void testHandleDirectoryInsteadOfFileReturns404() throws IOException {
-        // Trying to serve a directory as a file should fail
         Request request = createMockRequest("GET", "/img");
 
         Response response = handler.handle(request);
@@ -92,7 +88,6 @@ public class FileHandlerTest {
 
     @Test
     public void testHandlePathNormalizationWorks() throws IOException {
-        // Test that path normalization works for valid paths
         Request request = createMockRequest("GET", "/./index.html");
 
         Response response = handler.handle(request);

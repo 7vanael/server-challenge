@@ -2,9 +2,13 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
+import org.example.Main;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,10 +19,19 @@ public class FormHandlerTest {
     private String serverName = "Test Server";
     private Path rootPath = Paths.get("testroot");
     private FormHandler formHandler = new FormHandler(rootPath, serverName);
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private static final PrintStream originalOut = System.out;
 
     @BeforeEach
-    void setUp() {
+    public void setUp(){
+        outContent.reset();
+        System.setOut(new PrintStream(outContent));
         formHandler = new FormHandler(Paths.get("testroot"), "TestServer/1.0");
+    }
+
+    @AfterAll
+    public static void tearDown(){
+        System.setOut(originalOut);
     }
 
     @Test

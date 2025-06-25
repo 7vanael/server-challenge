@@ -32,11 +32,8 @@ public class Router {
 
         for (Route route : routes) {
             if (route.matches(request.getMethod(), request.getPath())) {
-                System.out.println("Route matched! About to call route.handle()");
                 try {
-                    Response response = route.handle(request);
-                    System.out.println("route.handle() returned: " + response.getStatusCode() + " - " + new String(response.getBody()));
-                    return response;
+                    return route.handle(request);
                 } catch (IOException e) {
                     return createErrorResponse(500);
                 }

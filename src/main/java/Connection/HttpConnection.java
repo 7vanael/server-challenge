@@ -18,8 +18,6 @@ public class HttpConnection extends Connection {
 
     @Override
     public void run() {
-        System.out.println("Connection initialized and Running");
-//        inputStreamReader: bytes->characters. BufferedReader: characters-> lines.
         try (BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
             Request request = Request.parseRequest(clientSocket.getInputStream());

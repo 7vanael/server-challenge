@@ -22,6 +22,5 @@ public class HttpConstants {
             ".pdf", "application/pdf"
     );
 
-    public static final String PROTOCOL_VERSION = "HTTP/1.1";
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 }

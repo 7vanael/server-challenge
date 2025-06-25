@@ -4,10 +4,7 @@ import Connection.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NotFoundResponseTest {
     @Test
@@ -17,7 +14,7 @@ public class NotFoundResponseTest {
         String body = new String(response.getBody());
         assertEquals(404, response.getStatusCode());
         assertEquals("text/html", response.getHeaders().get("Content-Type"));
-        assertTrue(!body.isEmpty());
+        assertFalse(body.isEmpty());
         Assertions.assertNotNull(response.getHeaders().get("Content-Length"));
         assertTrue(body.contains("404 Not Found"));
     }

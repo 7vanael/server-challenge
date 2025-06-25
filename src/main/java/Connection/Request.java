@@ -34,7 +34,6 @@ public class Request {
     private void parseRequestInternal(BufferedReader in) {
         try {
             String requestLine = in.readLine();
-            System.out.println("Request line: " + requestLine);
             if (requestLine == null || requestLine.trim().isEmpty()) {
                 errorCode = 400;
                 return;
@@ -105,19 +104,14 @@ public class Request {
 
     private void parseBody(BufferedReader in) throws IOException {
         String contentLengthStr = headers.get("content-length");
-//        System.out.println("Content-Length header: " + contentLengthStr);
         if (contentLengthStr != null) {
             int contentLength = Integer.parseInt(contentLengthStr);
-//            System.out.println("Parsed content length: " + contentLength);
             if (contentLength > 0) {
                 body = readBodyBytesFromReader(in, contentLength);
-//                System.out.println("Read body, actual length: " + body.length);
 
                 String contentType = headers.get("content-type");
                 if (contentType != null && contentType.startsWith("multipart/form-data")) {
                     parseMultipartBody();
-                } else {
-                    System.out.println("Not multipart form data");
                 }
             }
         }
@@ -200,8 +194,6 @@ public class Request {
         }
 
         part.content = contentSection.getBytes(StandardCharsets.ISO_8859_1);
-//        System.out.println("Parsed part - name: " + part.name + ", content length: " + part.content.length);
-
         return part;
     }
 

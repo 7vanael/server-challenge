@@ -35,7 +35,6 @@ public class GuessHandlerTest {
         Response response = handler.handle(request);
         String body = new String(response.getBody());
         List<String> cookies = response.getCookies();
-        System.out.println("cookies: " + cookies);
         assertTrue(body.contains("<h2>Can you guess the magic number?</h2>"));
         assertTrue(body.contains("I'm thinking of a number between 1 and 100"));
         assertTrue(body.contains("Attempts: 0"));
@@ -222,7 +221,6 @@ public class GuessHandlerTest {
     public void responseHasCorrectHeaders() throws IOException {
         MockRequest request = createMockRequest("GET", "/guess");
         Response response = handler.handle(request);
-        System.out.println(response.getHeaders());
         assertEquals(200, response.getStatusCode());
         assertTrue(response.getHeaders().containsKey("Content-Type"));
         assertEquals("text/html; charset=utf-8",
