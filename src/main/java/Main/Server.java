@@ -1,4 +1,4 @@
-package org.example;
+package Main;
 
 import Connection.HttpConnection;
 import Router.Router;
@@ -22,7 +22,7 @@ public class Server {
         this.router = router;
     }
 
-        public void startServer() {
+    public void startServer() {
         try {
             this.serverSocket = new ServerSocket(this.port);
         } catch (IOException e) {
@@ -39,7 +39,7 @@ public class Server {
                 Thread thread = new Thread(new HttpConnection(clientSocket, this.root, this.router));
                 thread.start();
             } catch (IOException e) {
-                if (running){
+                if (running) {
                     throw new RuntimeException(e);
                 }
             }

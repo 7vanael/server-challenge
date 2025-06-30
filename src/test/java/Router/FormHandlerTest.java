@@ -2,7 +2,6 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
-import org.example.Main;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,7 +98,7 @@ public class FormHandlerTest {
 
         assertEquals(200, response.getStatusCode());
         assertEquals("TestServer/1.0", response.getHeaders().get("Server"));
-        assertTrue(response.getHeaders().get("content-Type").contains("text/html"));
+        assertTrue(response.getHeaders().get("Content-Type").contains("text/html"));
         assertEquals("close", response.getHeaders().get("Connection"));
         assertNotNull(response.getHeaders().get("Content-Length"));
     }

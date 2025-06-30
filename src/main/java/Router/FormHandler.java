@@ -2,10 +2,9 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
-import org.example.HttpConstants;
-import org.example.RouteHandler;
+import Main.HttpConstants;
+import Main.RouteHandler;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -66,7 +65,6 @@ public class FormHandler implements RouteHandler {
     private Response handlePost(Request request) {
         String contentType = request.getHeader("content-type");
         StringBuilder postResults = new StringBuilder();
-        System.out.println("Content-Type: " + contentType); // Debug line
 
         if (contentType == null || !contentType.contains("multipart/form-data")) {
             return errorResponse(400);
@@ -91,12 +89,7 @@ public class FormHandler implements RouteHandler {
     }
 
     private Response createHtmlResponse(int statusCode, String html) {
-        byte[] htmlBytes = html.getBytes(StandardCharsets.UTF_8);
-        return new Response(serverName, statusCode, "text/html", html)
-                .addHeader("content-Type", "text/html; charset=utf-8")
-                .addHeader("Content-Length", String.valueOf(htmlBytes.length))
-                .addHeader("Server", serverName)
-                .addHeader("Connection", "close");
+        return new Response(serverName, statusCode, "text/html", html);
     }
 
     private Response errorResponse(int errorCode) {

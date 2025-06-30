@@ -1,6 +1,6 @@
 package Connection;
 
-import org.example.HttpConstants;
+import Main.HttpConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ public class Response {
         this.contentType = "text/html";
         this.body = new byte[0];
         this.headers = new HashMap<>();
+        setInitialHeaders();
     }
 
     public Response(String serverName, int statusCode, String contentType, String body) {
@@ -32,6 +33,7 @@ public class Response {
         this.contentType = contentType;
         this.body = body.getBytes();
         this.headers = new HashMap<>();
+        setInitialHeaders();
     }
 
     public Response(String serverName, int statusCode, String contentType, byte[] body) {
@@ -41,15 +43,23 @@ public class Response {
         this.contentType = contentType;
         this.body = body.clone();
         this.headers = new HashMap<>();
+        setInitialHeaders();
+    }
+
+    private void setInitialHeaders() {
+        this.addHeader("Content-Type", this.contentType);
+        this.addHeader("Content-Length", String.valueOf(this.body.length));
+        this.addHeader("Server", this.serverName);
+        this.addHeader("Connection", "close");
     }
 
 
-    public Response addCookie(String cookieValue){
+    public Response addCookie(String cookieValue) {
         cookies.add(cookieValue);
         return this;
     }
 
-    public List<String> getCookies(){
+    public List<String> getCookies() {
         return new ArrayList<>(cookies);
     }
 

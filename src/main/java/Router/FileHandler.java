@@ -1,9 +1,9 @@
 package Router;
 
-import org.example.HttpConstants;
+import Main.HttpConstants;
 import Connection.Request;
 import Connection.Response;
-import org.example.RouteHandler;
+import Main.RouteHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,10 +37,7 @@ public class FileHandler implements RouteHandler {
         byte[] fileBytes = Files.readAllBytes(targetPath);
         String contentType = getContentType(targetPath);
 
-        return new Response(serverName, 200, contentType, fileBytes)
-                .addHeader("Content-Type", contentType)
-                .addHeader("Content-Length", String.valueOf(fileBytes.length))
-                .addHeader("Server ", serverName);
+        return new Response(serverName, 200, contentType, fileBytes);
     }
 
     private String getContentType(Path filePath) {

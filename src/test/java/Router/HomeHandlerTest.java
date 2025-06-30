@@ -34,7 +34,7 @@ public class HomeHandlerTest {
 
         Assertions.assertEquals("text/html", response.getHeaders().get("Content-Type"));
         Assertions.assertNotNull(response.getHeaders().get("Content-Length"));
-        Assertions.assertEquals(serverName, response.getHeaders().get("Server "));
+        Assertions.assertEquals(serverName, response.getHeaders().get("Server"));
     }
 
 private Request createMockRequest(String method, String path) {

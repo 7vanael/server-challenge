@@ -1,12 +1,10 @@
 package Router;
 
-import org.example.HttpConstants;
 import Connection.Request;
 import Connection.Response;
-import org.example.RouteHandler;
+import Main.RouteHandler;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,11 +32,7 @@ public class DirectoryHandler implements RouteHandler {
 
         if (Files.isDirectory(targetPath)) {
             String directoryHtml = generateDirectoryListing(targetPath, requestPath);
-            byte[] htmlBytes = directoryHtml.getBytes(StandardCharsets.UTF_8);
-            return new Response(serverName, 200, "text/html", directoryHtml)
-                    .addHeader("Content-Type", "text/html")
-                    .addHeader("Content-Length", String.valueOf(htmlBytes.length))
-                    .addHeader("Server ", serverName);
+            return new Response(serverName, 200, "text/html", directoryHtml);
         } else {
             throw new IOException("Not a Directory");
         }

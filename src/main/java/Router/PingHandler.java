@@ -2,7 +2,7 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
-import org.example.RouteHandler;
+import Main.RouteHandler;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,9 +42,6 @@ public class PingHandler implements RouteHandler {
                 "<li>end time: " + endTime.format(formatter) + "</li></body></html>";
         String contentType = "text/html";
 
-        return new Response(serverName, 200, contentType, pingHtml)
-                .addHeader("Content-Type", contentType)
-                .addHeader("Content-Length", String.valueOf(pingHtml.getBytes().length))
-                .addHeader("Server ", serverName);
+        return new Response(serverName, 200, contentType, pingHtml);
     }
 }

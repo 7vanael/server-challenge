@@ -1,4 +1,4 @@
-import org.example.Main;
+import Main.Main;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;

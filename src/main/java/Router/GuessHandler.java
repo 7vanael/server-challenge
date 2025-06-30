@@ -3,10 +3,9 @@ package Router;
 import Connection.Request;
 import Connection.Response;
 import Game.GuessingGame;
-import org.example.RouteHandler;
+import Main.RouteHandler;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class GuessHandler implements RouteHandler {
@@ -95,12 +94,7 @@ public class GuessHandler implements RouteHandler {
     }
 
     private Response createHtmlResponse(int statusCode, String html) {
-        byte[] htmlBytes = html.getBytes(StandardCharsets.UTF_8);
-        return new Response(serverName, statusCode, "text/html", html)
-                .addHeader("Content-Type", "text/html; charset=utf-8")
-                .addHeader("Content-Length", String.valueOf(htmlBytes.length))
-                .addHeader("Server", serverName)
-                .addHeader("Connection", "close");
+        return new Response(serverName, statusCode, "text/html", html);
     }
 
     private void appendGuesses(StringBuilder html, GuessingGame gameState) {

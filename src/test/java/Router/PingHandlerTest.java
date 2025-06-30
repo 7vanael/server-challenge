@@ -2,7 +2,6 @@ package Router;
 
 import Connection.Request;
 import Connection.Response;
-import org.example.Main;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

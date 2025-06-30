@@ -1,13 +1,7 @@
-package org.example;
+package Main;
 
 import Router.Router;
-import Router.HomeHandler;
-import Router.DirectoryHandler;
-import Router.FileHandler;
-import Router.HelloHandler;
-import Router.FormHandler;
-import Router.PingHandler;
-import Router.GuessHandler;
+import Router.HttpRouteFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +14,8 @@ public class Main {
     public static String root = "testroot";
     public static String name = "Challenge Server";
 
-    private static String usage = "  -p     Specify the port.  Default is 80.\n" +
+    private static String usage =
+            "  -p     Specify the port.  Default is 80.\n" +
             "  -r     Specify the root directory.  Default is the current working directory.\n" +
             "  -h     Print this help message\n" +
             "  -x     Print the startup configuration without starting the server\n";
@@ -32,20 +27,8 @@ public class Main {
         Router router = new Router(name);
         Path rootPath = Paths.get(root);
 
-        router.addRoute("GET", "/", new HomeHandler(rootPath, name));
-        router.addRoute("GET", "index.html", new HomeHandler(rootPath, name));
-        router.addRoute("GET", "/index.html", new HomeHandler(rootPath, name));
-        router.addRoute("GET", "/hello", new HelloHandler(rootPath, name));
-        router.addRoute("GET", "/listing", new DirectoryHandler(rootPath, name));
-        router.addRoute("GET", "/listing/*", new DirectoryHandler(rootPath, name));
-        router.addRoute("GET", "/form", new FormHandler(rootPath, name));
-        router.addRoute("POST", "/form", new FormHandler(rootPath, name));
-        router.addRoute("GET", "/ping", new PingHandler(rootPath, name));
-        router.addRoute("GET", "/guess", new GuessHandler(rootPath, name));
-        router.addRoute("POST", "/guess", new GuessHandler(rootPath, name));
-
-        router.addRoute("GET", "/*", new FileHandler(rootPath, name));
-
+        RouteFactory routeFactory = new HttpRouteFactory(rootPath, name);
+        routeFactory.registerRoutes(router);
         Server server = new Server(port, root, router);
 
         server.startServer();

@@ -1,6 +1,6 @@
 package Connection;
 
-import org.example.ConnectionFactory;
+import Main.ConnectionFactory;
 import Router.Router;
 
 import java.net.Socket;

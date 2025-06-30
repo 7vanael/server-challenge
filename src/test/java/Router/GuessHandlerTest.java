@@ -1,12 +1,10 @@
 package Router;
 
-import Connection.Request;
 import Connection.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -216,15 +214,13 @@ public class GuessHandlerTest {
         assertTrue(body.contains("Guess 1: 35 - Too low!"));
     }
 
-
     @Test
     public void responseHasCorrectHeaders() throws IOException {
         MockRequest request = createMockRequest("GET", "/guess");
         Response response = handler.handle(request);
         assertEquals(200, response.getStatusCode());
         assertTrue(response.getHeaders().containsKey("Content-Type"));
-        assertEquals("text/html; charset=utf-8",
+        assertEquals("text/html",
                 response.getHeaders().get("Content-Type"));
     }
-
 }
