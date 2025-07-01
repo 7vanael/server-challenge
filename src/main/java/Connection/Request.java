@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Request {
+public class Request implements RequestI {
     private String method;
     private String path;
     private String protocol;
