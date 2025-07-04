@@ -150,7 +150,7 @@ public class RequestTest {
         assertEquals("john_doe", request.getMultipartValue("username"));
         assertEquals("john@example.com", request.getMultipartValue("email"));
 
-        Request.MultipartPart usernamePart = request.getMultipartPart("username");
+        MultiPart usernamePart = request.getMultipartPart("username");
         assertNotNull(usernamePart);
         assertEquals("username", usernamePart.getName());
         assertNull(usernamePart.getFilename());
@@ -187,7 +187,7 @@ public class RequestTest {
 
         assertEquals("My test file", request.getMultipartValue("description"));
 
-        Request.MultipartPart filePart = request.getMultipartPart("file");
+        MultiPart filePart = request.getMultipartPart("file");
         assertNotNull(filePart);
         assertEquals("file", filePart.getName());
         assertEquals("test.txt", filePart.getFilename());

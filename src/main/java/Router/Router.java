@@ -1,6 +1,7 @@
 package Router;
 
 import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.HttpConstants;
 import Main.RouteHandler;
@@ -26,7 +27,7 @@ public class Router {
         return routes;
     }
 
-    public Response route(Request request) {
+    public Response route(RequestI request) {
         if (request.getErrorCode() != 0) {
             return createErrorResponse(request.getErrorCode());
         }

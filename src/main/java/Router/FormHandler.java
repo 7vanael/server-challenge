@@ -1,6 +1,7 @@
 package Router;
 
-import Connection.Request;
+import Connection.MultiPart;
+import Connection.RequestI;
 
 import Connection.Response;
 import Main.HttpConstants;
@@ -33,7 +34,7 @@ public class FormHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) {
+    public Response handle(RequestI request) {
         if (request.getMethod().equals("GET")) {
             return handleGet(request);
         } else {
@@ -41,7 +42,7 @@ public class FormHandler implements RouteHandler {
         }
     }
 
-    private Response handleGet(Request request) {
+    private Response handleGet(RequestI request) {
         String queryString = request.getQueryString();
         StringBuilder parsedQueries = new StringBuilder();
 
@@ -63,7 +64,7 @@ public class FormHandler implements RouteHandler {
         return createHtmlResponse(200, newForm);
     }
 
-    private Response handlePost(Request request) {
+    private Response handlePost(RequestI request) {
         String contentType = request.getHeader("content-type");
         StringBuilder postResults = new StringBuilder();
 
@@ -72,9 +73,9 @@ public class FormHandler implements RouteHandler {
         }
         if (contentType != null && contentType.contains("multipart/form-data")) {
 
-            List<Request.MultipartPart> parts = request.getMultipartParts();
+            List<MultiPart> parts = request.getMultipartParts();
 
-            for (Request.MultipartPart part : parts) {
+            for (MultiPart part : parts) {
                 if (part.isFile()) {
                     postResults.append("<ul>")
                             .append("<li>field name: ").append(part.getName()).append("</li>")

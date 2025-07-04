@@ -1,10 +1,10 @@
 package Main;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 
 import java.io.IOException;
 
 public interface RouteHandler {
-    Response handle(Request request) throws IOException;
+    Response handle(RequestI request) throws IOException;
 }

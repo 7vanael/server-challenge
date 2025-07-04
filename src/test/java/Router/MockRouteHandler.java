@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 
@@ -15,7 +15,7 @@ public class MockRouteHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         handleCalled = true;
         return new Response("Test Server", 200, "text/plain", responseBody);
     }

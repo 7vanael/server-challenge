@@ -1,7 +1,6 @@
 package Router;
 
-import Connection.Request;
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Game.GuessingGame;
 import Main.RouteHandler;
@@ -28,7 +27,7 @@ public class GuessHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         if (request.getMethod().equals("GET")) {
             return handleGet(request);
         } else {
@@ -36,7 +35,7 @@ public class GuessHandler implements RouteHandler {
         }
     }
 
-    private Response handlePost(Request request) {
+    private Response handlePost(RequestI request) {
         GuessingGame gameState = new GuessingGame(request);
         String html = generateFormResponse(gameState);
         Response response = createHtmlResponse(200, html);
@@ -44,7 +43,7 @@ public class GuessHandler implements RouteHandler {
         return response;
     }
 
-    private Response handleGet(Request request) {
+    private Response handleGet(RequestI request) {
         GuessingGame gameState;
         if (request.getQueryString() != null && request.getQueryString().contains("newgame=true")) {
             gameState = new GuessingGame(request);

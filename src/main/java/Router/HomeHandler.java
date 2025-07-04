@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 
@@ -19,7 +19,7 @@ public class HomeHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         Path indexPath = rootPath.resolve("index.html");
 
         byte[] fileBytes = Files.readAllBytes(indexPath);

@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 
@@ -33,7 +33,7 @@ public class Route {
         return false;
     }
 
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         return handler.handle(request);
     }
 }

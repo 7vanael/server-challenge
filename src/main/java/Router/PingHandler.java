@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 
@@ -23,7 +23,7 @@ public class PingHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         startTime = LocalDateTime.now();
         String delay = request.getSegment();
         try {

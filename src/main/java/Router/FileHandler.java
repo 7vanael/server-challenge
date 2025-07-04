@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Main.HttpConstants;
 import Connection.Response;
 import Main.RouteHandler;
@@ -21,7 +21,7 @@ public class FileHandler implements RouteHandler {
 
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         String requestPath = request.getPath();
 
         if (requestPath.startsWith("/")) {

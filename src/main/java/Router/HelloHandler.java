@@ -1,6 +1,6 @@
 package Router;
 
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 
@@ -18,7 +18,7 @@ public class HelloHandler implements RouteHandler {
     }
 
     @Override
-    public Response handle(Request request) throws IOException {
+    public Response handle(RequestI request) throws IOException {
         String welcomeHtml = "<html><head><title>Hello, Welcome!</title></head>" +
                 "<body><h1>Hello, Welcome!</h1>" +
                 "<p>You've reached the Hello page on Server: " + serverName + "</p></body></html>";

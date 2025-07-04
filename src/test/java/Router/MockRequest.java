@@ -1,5 +1,6 @@
 package Router;
 
+import Connection.MultiPart;
 import Connection.Request;
 
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class MockRequest extends Request {
         this.path = path;
         this.errorCode = errorCode;
     }
-    private List<Request.MultipartPart> multipartParts = new ArrayList<>();
+    private List<MultiPart> multipartParts = new ArrayList<>();
 
     @Override
-    public List<MultipartPart> getMultipartParts() {
+    public List<MultiPart> getMultipartParts() {
         return multipartParts;
     }
 
-    public void addMultipartPart(Request.MultipartPart part) {
+    public void addMultipartPart(MultiPart part) {
         multipartParts.add(part);
     }
     @Override

@@ -72,7 +72,7 @@ public class FormHandlerTest {
         MockRequest mockRequest = new MockRequest("POST", "/form", 0);
         mockRequest.setHeader("content-type", "multipart/form-data; boundary=test123");
 
-        MockMultipartPart filePart = new MockMultipartPart();
+        MockMultiPart filePart = new MockMultiPart();
         filePart.setName("file");
         filePart.setFilename("test.txt");
         filePart.setContentType("text/plain");
@@ -103,7 +103,7 @@ public class FormHandlerTest {
         assertNotNull(response.getHeaders().get("Content-Length"));
     }
 
-    private static class MockMultipartPart extends Request.MultipartPart {
+    private static class MockMultiPart extends Connection.MultiPart {
         private String name;
         private String filename;
         private String contentType;

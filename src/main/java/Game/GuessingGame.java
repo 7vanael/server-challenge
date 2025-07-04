@@ -1,6 +1,6 @@
 package Game;
 
-import Connection.Request;
+import Connection.RequestI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class GuessingGame {
     private boolean inProgress = true;
     private String errorMessage = null;
 
-    public GuessingGame(Request request) {
+    public GuessingGame(RequestI request) {
         boolean isNewGameRequest = request.getQueryString() != null && request.getQueryString().contains("newgame=true");
 
         if (isNewGameRequest) {
@@ -85,7 +85,7 @@ public class GuessingGame {
         }
     }
 
-    private void parseGuess(Request request) {
+    private void parseGuess(RequestI request) {
         boolean isNewGameRequest = request.getQueryString() != null &&
                 request.getQueryString().contains("newgame=true");
 

@@ -1,7 +1,7 @@
 package Router;
 
 import Connection.Request;
-import Connection.Request;
+import Connection.RequestI;
 import Connection.Response;
 import Main.RouteHandler;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ public class RouteTest {
     @Test
     public void testHandleCallsRouteHandler() throws IOException {
         Route route = new Route("GET", "/test", handler);
-        Request request = createMockRequest("GET", "/test");
+        RequestI request = createMockRequest("GET", "/test");
 
         Response response = route.handle(request);
 
@@ -74,7 +74,7 @@ public class RouteTest {
     public void testHandleThrowsIOExceptionWhenHandlerThrows() {
         ThrowingRouteHandler throwingHandler = new ThrowingRouteHandler();
         Route route = new Route("GET", "/test", throwingHandler);
-        Request request = createMockRequest("GET", "/test");
+        RequestI request = createMockRequest("GET", "/test");
 
         Assertions.assertThrows(IOException.class, () -> {
             route.handle(request);
@@ -115,7 +115,7 @@ public class RouteTest {
     }
 
 
-    private Request createMockRequest(String method, String path) {
+    private RequestI createMockRequest(String method, String path) {
         return new Request() {
             @Override
             public String getMethod() {
@@ -136,7 +136,7 @@ public class RouteTest {
 
     private static class ThrowingRouteHandler implements RouteHandler {
         @Override
-        public Response handle(Request request) throws IOException {
+        public Response handle(RequestI request) throws IOException {
             throw new IOException("Test exception");
         }
     }

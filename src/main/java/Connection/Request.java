@@ -18,7 +18,7 @@ public class Request implements RequestI {
     private String queryString = null;
     private HashMap<String, String> headers = new HashMap<>();
     private byte[] body = new byte[0];
-    private List<MultipartPart> multipartParts = new ArrayList<>();
+    private List<MultiPart> multiParts = new ArrayList<>();
     private String segment;
     private String cookieString;
     private HashMap<String, String> cookies = new HashMap<>();
@@ -151,9 +151,9 @@ public class Request implements RequestI {
                 continue;
             }
 
-            MultipartPart multipartPart = parseMultipartPart(part);
-            if (multipartPart != null) {
-                multipartParts.add(multipartPart);
+            MultiPart multiPart = parseMultipartPart(part);
+            if (multiPart != null) {
+                multiParts.add(multiPart);
             }
         }
     }
@@ -177,14 +177,14 @@ public class Request implements RequestI {
         return null;
     }
 
-    private MultipartPart parseMultipartPart(String partContent) {
+    private MultiPart parseMultipartPart(String partContent) {
 
         int emptyLineIndex = partContent.indexOf("\r\n\r\n");
 
         String headersSection = partContent.substring(0, emptyLineIndex);
         String contentSection = partContent.substring(emptyLineIndex + 4);
 
-        MultipartPart part = new MultipartPart();
+        MultiPart part = new MultiPart();
 
         String[] headerLines = headersSection.split("\r\n");
         parseMultipartHeaders(headerLines, part);
@@ -197,7 +197,7 @@ public class Request implements RequestI {
         return part;
     }
 
-    private void parseMultipartHeaders(String[] headerLines, MultipartPart part) {
+    private void parseMultipartHeaders(String[] headerLines, MultiPart part) {
         for (String headerLine : headerLines) {
             if (headerLine.trim().isEmpty()) continue;
 
@@ -214,7 +214,7 @@ public class Request implements RequestI {
         }
     }
 
-    private void parseContentDisposition(String headerValue, MultipartPart part) {
+    private void parseContentDisposition(String headerValue, MultiPart part) {
         String[] parts = headerValue.split(";");
         for (String p : parts) {
             p = p.trim();
@@ -257,22 +257,22 @@ public class Request implements RequestI {
     public String getQueryString() { return queryString; }
     public HashMap<String, String> getHeaders() { return headers; }
     public byte[] getBody() { return body; }
-    public List<MultipartPart> getMultipartParts() { return multipartParts; }
+    public List<MultiPart> getMultipartParts() { return multiParts; }
     public String getSegment() {return segment;}
 
     public String getHeader(String name) {
         return headers.get(name.toLowerCase());
     }
 
-    public MultipartPart getMultipartPart(String name) {
-        return multipartParts.stream()
+    public MultiPart getMultipartPart(String name) {
+        return multiParts.stream()
                 .filter(part -> name.equals(part.getName()))
                 .findFirst()
                 .orElse(null);
     }
 
     public String getMultipartValue(String name) {
-        MultipartPart part = getMultipartPart(name);
+        MultiPart part = getMultipartPart(name);
         return part != null ? part.getContentAsString() : null;
     }
 
@@ -280,27 +280,5 @@ public class Request implements RequestI {
         return cookies;
     }
 
-    public static class MultipartPart {
-        private HashMap<String, String> headers = new HashMap<>();
-        private byte[] content = new byte[0];
-        private String name;
-        private String filename;
 
-        public HashMap<String, String> getHeaders() { return headers; }
-        public byte[] getContent() { return content; }
-        public String getName() { return name; }
-        public String getFilename() { return filename; }
-
-        public String getContentAsString() {
-            return new String(content, StandardCharsets.UTF_8).trim();
-        }
-
-        public String getContentType() {
-            return headers.get("content-type");
-        }
-
-        public boolean isFile() {
-            return filename != null && !filename.isEmpty();
-        }
-    }
 }

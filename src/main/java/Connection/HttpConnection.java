@@ -20,7 +20,7 @@ public class HttpConnection extends Connection {
     public void run() {
         try (BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
-            Request request = Request.parseRequest(clientSocket.getInputStream());
+            RequestI request = Request.parseRequest(clientSocket.getInputStream());
             Response response = router.route(request);
             writeResponse(out, response);
 

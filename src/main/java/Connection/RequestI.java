@@ -1,6 +1,7 @@
 package Connection;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface RequestI {
     String getMethod();
@@ -24,4 +25,6 @@ public interface RequestI {
     String getHeader(String name); //To lower case!
 
     HashMap<String, String> getCookies();
+
+    List<MultiPart> getMultipartParts();
 }
